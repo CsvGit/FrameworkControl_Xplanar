@@ -1,0 +1,19 @@
+﻿<div id="Desktop" data-tchmi-type="TcHmi.Controls.System.TcHmiView" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width-mode="Content" data-tchmi-min-width="100" data-tchmi-min-width-unit="%" data-tchmi-height-mode="Content" data-tchmi-min-height="100" data-tchmi-min-height-unit="%" data-tchmi-creator-viewport-width="1920" data-tchmi-creator-viewport-height="1080" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-background-image-vertical-alignment="Center">
+  <div id="ViewDesktopBeckhoffLogo" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-src="Images/Beckhoff_Logo.svg" data-tchmi-left="25" data-tchmi-top="25" data-tchmi-width="200" data-tchmi-height="50">
+
+  </div>
+<div id="TcHmiXplanarControl_1" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="1080" data-tchmi-height-unit="px" data-tchmi-left="225" data-tchmi-left-unit="px" data-tchmi-top="153" data-tchmi-top-unit="px" data-tchmi-width="1920" data-tchmi-width-unit="px" data-tchmi-xplanar-scalefactor="1" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=100%/s%" data-tchmi-xplanar-tile-imagesrc="\Images\Beckhoff_Logo.svg" data-tchmi-xplanar-trackindex="2" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-background-image-vertical-alignment="Center" data-tchmi-xplanar-mover-imagesrc="Images/metal.png">
+
+<script data-tchmi-target-attribute="data-tchmi-xplanar-tile-backgroundcolor" type="application/json">
+{
+  "color": "rgba(255, 255, 255, 1)"
+}
+</script>
+
+<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-textcolor" type="application/json">
+{
+  "color": "rgba(0, 0, 0, 1)"
+}
+</script>
+</div>
+</div>

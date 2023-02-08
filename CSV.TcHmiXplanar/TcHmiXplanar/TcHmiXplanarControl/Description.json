@@ -1,0 +1,225 @@
+﻿{
+  "$schema": "../.hmiframework/Schema/ControlDescription.Schema.json",
+  "apiVersion": 1,
+  "name": "TcHmiXplanarControl",
+  "namespace": "TcHmi.Controls.TcHmiXplanar",
+  "displayName": "TcHmiXplanarControl",
+  "version": {
+    "full": "1.0.0.0",
+    "major": 1,
+    "minor": 0,
+    "revision": 0,
+    "build": 0
+  },
+  "visible": true,
+  "themeable": "Standard",
+  "base": "TcHmi.Controls.System.TcHmiControl",
+  "description": "This description text will be used as a Tooltip in Visual Studio.",
+  "properties": {
+    "containerControl": false,
+    "geometry": {
+      "width": 200,
+      "height": 200
+    }
+  },
+  "template": "Template.html",
+  "icons": [
+    {
+      "name": "Icons/16x16.png",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "name": "Icons/24x24.png",
+      "width": 24,
+      "height": 24
+    },
+    {
+      "name": "Icons/32x32.png",
+      "width": 32,
+      "height": 32
+    },
+    {
+      "name": "Icons/64x64.png",
+      "width": 64,
+      "height": 64
+    }
+  ],
+  "dependencyFiles": [
+    {
+      "name": "TcHmiXplanarControl.js",
+      "type": "JavaScript",
+      "description": "Contains all the main logic."
+    },
+    {
+      "name": "Style.css",
+      "type": "Stylesheet",
+      "description": "Theme independent style"
+    }
+  ],
+  "themes": {
+    "Base": {
+      "resources": [
+        {
+          "name": "Themes/Base/Style.css",
+          "type": "Stylesheet",
+          "description": "Theme dependent style"
+        }
+      ]
+    },
+    "Base-Dark": {
+      "resources": [
+        {
+          "name": "Themes/Base-Dark/Style.css",
+          "type": "Stylesheet",
+          "description": "Theme dependent style"
+        }
+      ]
+    }
+  },
+  "attributes": [
+    {
+      "name": "data-tchmi-st-xplanar",
+      "displayName": "stXplanar",
+      "propertyName": "stXplanar",
+      "propertySetterName": "M_SetStXplanar",
+      "propertyGetterName": "M_GetStXplanar",
+      "visible": true,
+      "type": "tchmi:general#/definitions/Object",
+      "category": "Xplanar Params",
+      "description": "Xplanar Structure.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": null,
+      "defaultValueInternal": null
+    },
+    {
+      "name": "data-tchmi-xplanar-mover-imagesrc",
+      "displayName": "MoverImageSrc",
+      "propertyName": "MoverImageSrc",
+      "propertySetterName": "M_SetMoverImageSrc",
+      "propertyGetterName": "M_GetMoverImageSrc",
+      "visible": true,
+      "type": "tchmi:framework#/definitions/Path",
+      "category": "Xplanar Params",
+      "description": "Mover Image Src.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": null,
+      "defaultValueInternal": null
+    },
+    {
+      "name": "data-tchmi-xplanar-scalefactor",
+      "displayName": "ScaleFactor",
+      "propertyName": "ScaleFactor",
+      "propertySetterName": "M_SetScaleFactor",
+      "propertyGetterName": "M_GetScaleFactor",
+      "visible": true,
+      "type": "tchmi:general#/definitions/Number",
+      "category": "Xplanar Params",
+      "description": "Xplanar scale factor.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": 1,
+      "defaultValueInternal": 1
+    },
+    {
+      "name": "data-tchmi-xplanar-trackindex",
+      "displayName": "TrackIndex",
+      "propertyName": "TrackIndex",
+      "propertySetterName": "M_SetTrackIndex",
+      "propertyGetterName": "M_GetTrackIndex",
+      "visible": true,
+      "type": "tchmi:general#/definitions/Number",
+      "category": "Xplanar Params",
+      "description": "Xplanar track index.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": 1,
+      "defaultValueInternal": 1
+    },
+    {
+      "name": "data-tchmi-xplanar-mover-textcolor",
+      "displayName": "MoverTextColor",
+      "propertyName": "MoverTextColor",
+      "propertySetterName": "M_SetMoverTextColor",
+      "propertyGetterName": "M_GetMoverTextColor",
+      "visible": true,
+      "type": "tchmi:framework#/definitions/Color",
+      "category": "Xplanar Params",
+      "description": "Mover text color.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": {
+        "color": "rgba(255,255,255,1)"
+      },
+      "defaultValueInternal": {
+        "color": "rgba(255,255,255,1)"
+      }
+    },
+    {
+      "name": "data-tchmi-xplanar-tile-backgroundcolor",
+      "displayName": "TileBackgroundColor",
+      "propertyName": "TileBackgroundColor",
+      "propertySetterName": "M_SetTileBackgroundColor",
+      "propertyGetterName": "M_GetTileBackgroundColor",
+      "visible": true,
+      "type": "tchmi:framework#/definitions/Color",
+      "category": "Xplanar Params",
+      "description": "Tile background color.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": {
+        "color": "rgba(0,0,0,1)"
+      },
+      "defaultValueInternal": {
+        "color": "rgba(0,0,0,1)"
+      }
+    }
+  ],
+  "attributeCategories": [
+    {
+      "name": "stXplanar",
+      "displayPriority": 10
+    },
+    {
+      "name": "MoverImageSrc",
+      "displayPriority": 10
+    },
+    {
+      "name": "ScaleFactor",
+      "displayPriority": 10
+    },
+    {
+      "name": "TrackIndex",
+      "displayPriority": 10
+    },
+    {
+      "name": "MoverTextColor",
+      "displayPriority": 10
+    },
+    {
+      "name": "TileBackgroundColor",
+      "displayPriority": 10
+    }
+  ],
+  "functions": [],
+  "events": [],
+  "dataTypes": [
+    {
+      "schema": "Schema/Types.Schema.json"
+    }
+  ]
+}

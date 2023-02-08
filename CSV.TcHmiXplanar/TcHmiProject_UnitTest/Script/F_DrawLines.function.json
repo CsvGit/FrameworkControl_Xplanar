@@ -1,0 +1,112 @@
+﻿{
+  "$schema": "../.hmiframework/Schema/FunctionDescription.Schema.json",
+  "apiVersion": 1,
+  "version": {
+    "full": "0.0.0.0",
+    "major": 0,
+    "minor": 0,
+    "revision": 0,
+    "build": 0
+  },
+  "dependencyFiles": [
+    {
+      "name": "F_DrawLines.js",
+      "type": "JavaScript",
+      "description": ""
+    }
+  ],
+  "function": {
+    "name": "F_DrawLines",
+    "namespace": "TcHmi.Functions.TcHmiXplanarMover",
+    "displayName": "F_DrawLines",
+    "description": "",
+    "waitMode": "Synchronous",
+    "category": "",
+    "returnValue": {
+      "type": "tchmi:general#/definitions/VOID"
+    },
+    "arguments": [
+      {
+        "name": "__ctx",
+        "displayName": "__ctx",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Context",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__canvas",
+        "displayName": "__canvas",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Canvas",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__scaleFactor",
+        "displayName": "__scaleFactor",
+        "type": "tchmi:general#/definitions/Number",
+        "description": "Scale Factor",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__trackIndex",
+        "displayName": "__trackIndex",
+        "type": "tchmi:general#/definitions/Number",
+        "description": "Track index",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__displayOffset",
+        "displayName": "__displayOffset",
+        "type": "tchmi:general#/definitions/Number",
+        "description": "Track index",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__arrPoint",
+        "displayName": "__arrPoint",
+        "type": "tchmi:general#/definitions/Array",
+        "description": "Array of points",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__arrPointType",
+        "displayName": "__arrPoint",
+        "type": "tchmi:general#/definitions/Array",
+        "description": "Array of point-types",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__arrMarkerType",
+        "displayName": "__arrMarkerType",
+        "type": "tchmi:general#/definitions/Array",
+        "description": "Array of marker-types",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__astMarkerColor",
+        "displayName": "__astMarkerColor",
+        "type": "tchmi:general#/definitions/Array",
+        "description": "Array of marker-colors",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      }
+    ]
+  }
+}

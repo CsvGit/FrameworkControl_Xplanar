@@ -1,0 +1,121 @@
+﻿{
+  "$schema": "../.hmiframework/Schema/FunctionDescription.Schema.json",
+  "apiVersion": 1,
+  "version": {
+    "full": "0.0.0.0",
+    "major": 0,
+    "minor": 0,
+    "revision": 0,
+    "build": 0
+  },
+  "dependencyFiles": [
+    {
+      "name": "F_TrackCircle.js",
+      "type": "JavaScript",
+      "description": ""
+    }
+  ],
+  "function": {
+    "name": "F_TrackCircle",
+    "namespace": "TcHmi.Functions.TcHmiXplanarMover",
+    "displayName": "F_TrackCircle",
+    "description": "",
+    "waitMode": "Synchronous",
+    "category": "",
+    "returnValue": {
+      "type": "tchmi:general#/definitions/VOID"
+    },
+    "arguments": [
+      {
+        "name": "__ctx",
+        "displayName": "__ctx",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Context.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__point1",
+        "displayName": "__point1",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point 1.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__point2",
+        "displayName": "__point2",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point 2.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__point3",
+        "displayName": "__point3, ",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point 3.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__pointType1",
+        "displayName": "__pointType1, ",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point type 1.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__pointType2",
+        "displayName": "__pointType2",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point type 2.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__pointType3",
+        "displayName": "__pointType3",
+        "type": "tchmi:general#/definitions/Any",
+        "description": "Point type 3.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__trackIndex",
+        "displayName": "__trackIndex",
+        "type": "tchmi:general#/definitions/Number",
+        "description": "Track index.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__trackColor",
+        "displayName": "__trackColor",
+        "type": "tchmi:general#/definitions/String",
+        "description": "Track color.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      },
+      {
+        "name": "__scaleFactor",
+        "displayName": "__scaleFactor",
+        "type": "tchmi:general#/definitions/Number",
+        "description": "Scale factor.",
+        "defaultValue": null,
+        "required": true,
+        "bindable": true
+      }
+    ]
+  }
+}

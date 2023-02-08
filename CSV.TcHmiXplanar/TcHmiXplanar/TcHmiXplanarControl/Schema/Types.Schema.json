@@ -1,0 +1,11 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "definitions": {
+    "TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl": {
+      "type": "object",
+      "frameworkInstanceOf": "TcHmi.Controls.System.TcHmiControl",
+      "frameworkControlType": "TcHmiXplanarControl",
+      "frameworkControlNamespace": "TcHmi.Controls.TcHmiXplanar"
+    }
+  }
+}
