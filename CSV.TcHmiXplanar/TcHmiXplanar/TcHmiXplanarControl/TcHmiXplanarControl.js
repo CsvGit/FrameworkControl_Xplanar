@@ -291,27 +291,26 @@ var TcHmi;
                     let offsetWidth = this.__deltaOffsetWidth * (1 / this.__scaleFactor);
                     let offsetHeight = this.__deltaOffsetHeight * (1 / this.__scaleFactor);
                     // Loop index
-                    let amountMovers = this.__stXplanar.astMoverDimension.length;
-                    for (let j = 0; j < amountMovers; j++) {
+                    for (let i = 0; i < __stXplanar.nMoverCount; i++) {
                         // Mover params
-                        let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(j + 1);
-                        let strMoverTextID = this.__id + '_TcHmiMoverText' + String(j + 1);
-                        let strMoverTextName = this.__moverText + String(j + 1);
-                        let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(j + 1);
+                        let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
+                        let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
+                        let strMoverTextName = this.__moverText + String(i + 1);
+                        let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
                         let strMoverImageSrc = this.__moverImageSrc;
                         // Dimension
-                        let width = this.__stXplanar.astMoverDimension[j].nWidthX * (1 / this.__scaleFactor);
-                        let height = this.__stXplanar.astMoverDimension[j].nHeightY * (1 / this.__scaleFactor);
+                        let width = this.__stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
+                        let height = this.__stXplanar.astMoverDimension[i].nHeightY * (1 / this.__scaleFactor);
                         // Quarter
                         let quarterMoverWidth = (width) * (1 / 4);
                         let quarterMoverHeight = (height) * (1 / 4);
                         // Position & rotation
-                        let x = this.__stXplanar.astMoverInfo[j].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
-                        let y = this.__stXplanar.astMoverInfo[j].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
-                        let z = this.__stXplanar.astMoverInfo[j].stActualPosition.z * (1 / this.__scaleFactor);
-                        let a = this.__stXplanar.astMoverInfo[j].stActualPosition.a;
-                        let b = this.__stXplanar.astMoverInfo[j].stActualPosition.b;
-                        let c = this.__stXplanar.astMoverInfo[j].stActualPosition.c;
+                        let x = this.__stXplanar.astMoverInfo[i].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
+                        let y = this.__stXplanar.astMoverInfo[i].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
+                        let z = this.__stXplanar.astMoverInfo[i].stActualPosition.z * (1 / this.__scaleFactor);
+                        let a = this.__stXplanar.astMoverInfo[i].stActualPosition.a;
+                        let b = this.__stXplanar.astMoverInfo[i].stActualPosition.b;
+                        let c = this.__stXplanar.astMoverInfo[i].stActualPosition.c;
                         // Append
                         let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                         let myMoverText = TcHmi.Controls.get(strMoverTextID);
@@ -371,8 +370,7 @@ var TcHmi;
                 // Process tile //
                 //--------------//
                 M_HandleTiles(__stXplanar) {
-                    let amountTiles = __stXplanar.nTileCount;
-                    for (let i = 0; i < amountTiles; i++) {
+                    for (let i = 0; i < __stXplanar.nTileCount; i++) {
                         // Tile params
                         let strTileFrameID = this.__id + '_TcHmiTileFrame' + String(i + 1);
                         // Position
@@ -469,6 +467,28 @@ var TcHmi;
                     // Clear ctx
                     this.__ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
                 }
+                /*
+                 *
+                 * TO FIX!!!!
+                 *
+                 *
+                //----------------//
+                // Window rescale //
+                //----------------//
+     
+                window.addEventListener("resize", function(data) {
+                    F_RebuildTracks();
+                });
+                */
+                /*
+                //-----------//
+                // Get track //
+                //-----------//
+
+                TcHmi.EventProvider.register(strGetTrack + '.onPressed', function (data) {
+                        F_RebuildTracks();
+                });
+                */
                 //-----------------------------//
                 // Control Factory Api methods //
                 //-----------------------------//

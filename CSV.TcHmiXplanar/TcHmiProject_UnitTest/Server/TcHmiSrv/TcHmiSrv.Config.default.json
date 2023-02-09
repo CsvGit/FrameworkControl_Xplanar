@@ -117,6 +117,33 @@
             "startOffset": 1,
             "type": "array"
         },
+        "PLC1.ARRAY_1..30_OF-STRING-80": {
+            "items": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "maxItems": 30,
+            "minItems": 30,
+            "startOffset": 1,
+            "type": "array"
+        },
+        "PLC1.ARRAY_1..30_OF-ST_MoverDimension": {
+            "items": {
+                "$ref": "#/definitions/PLC1.ST_MoverDimension"
+            },
+            "maxItems": 30,
+            "minItems": 30,
+            "startOffset": 1,
+            "type": "array"
+        },
+        "PLC1.ARRAY_1..30_OF-ST_MoverInfo": {
+            "items": {
+                "$ref": "#/definitions/PLC1.ST_MoverInfo"
+            },
+            "maxItems": 30,
+            "minItems": 30,
+            "startOffset": 1,
+            "type": "array"
+        },
         "PLC1.E_MarkerColor": {
             "allOf": [
                 {
@@ -456,13 +483,13 @@
                     "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-ST_TemperatureDistribution"
                 },
                 "asMoverType": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..10_OF-STRING-80"
+                    "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-STRING-80"
                 },
                 "astMoverDimension": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..10_OF-ST_MoverDimension"
+                    "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-ST_MoverDimension"
                 },
                 "astMoverInfo": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..10_OF-ST_MoverInfo"
+                    "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-ST_MoverInfo"
                 },
                 "astTrackInfo": {
                     "$ref": "#/definitions/PLC1.ARRAY_1..20_OF-ST_Track"
@@ -476,20 +503,20 @@
                 "bGetTrack": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
-                "bHideHeatmap": {
-                    "$ref": "tchmi:general#/definitions/BOOL"
-                },
                 "bShowHeatmap": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
                 "bValid": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
-                "nIndexTrack": {
-                    "$ref": "tchmi:general#/definitions/UINT"
+                "nMoverCount": {
+                    "$ref": "tchmi:general#/definitions/UDINT"
                 },
                 "nTileCount": {
                     "$ref": "tchmi:general#/definitions/UDINT"
+                },
+                "nTrackIndex": {
+                    "$ref": "tchmi:general#/definitions/UINT"
                 }
             },
             "type": "object"

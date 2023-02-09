@@ -2,7 +2,7 @@
   <div id="ViewDesktopBeckhoffLogo" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-src="Images/Beckhoff_Logo.svg" data-tchmi-left="0" data-tchmi-top="20" data-tchmi-width="200" data-tchmi-height="50">
 
   </div>
-<div id="TcHmiXplanarControl_1" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="960" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="373" data-tchmi-top-unit="px" data-tchmi-width="1920" data-tchmi-width-unit="px" data-tchmi-xplanar-scalefactor="1" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=1000%/s%" data-tchmi-xplanar-tile-imagesrc="\Images\Beckhoff_Logo.svg" data-tchmi-xplanar-trackindex="0" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-background-image-vertical-alignment="Center" data-tchmi-xplanar-mover-imagesrc="Images/metal.png">
+<div id="TcHmiXplanarControl_1" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="960" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="373" data-tchmi-top-unit="px" data-tchmi-width="1920" data-tchmi-width-unit="px" data-tchmi-xplanar-scalefactor="1" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=100%/s%" data-tchmi-xplanar-tile-imagesrc="\Images\Beckhoff_Logo.svg" data-tchmi-xplanar-trackindex="0" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-background-image-vertical-alignment="Center" data-tchmi-xplanar-mover-imagesrc="Images/metal.png">
 
 
 
@@ -18,14 +18,14 @@
 }
 </script>
 </div>
-<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="340" data-tchmi-height-unit="px" data-tchmi-left="1470" data-tchmi-left-unit="px" data-tchmi-top="20" data-tchmi-top-unit="px" data-tchmi-width="450" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="18" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="18">
+<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="325" data-tchmi-height-unit="px" data-tchmi-left="848" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="952" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="24" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="24">
 <script data-tchmi-target-attribute="data-tchmi-src-column" type="application/json">
 [
   {
     "name": "stActualPosition::x",
     "label": "X mm",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
@@ -56,7 +56,7 @@
     "name": "stActualPosition::y",
     "label": "Y mm",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
@@ -87,7 +87,7 @@
     "name": "stActualPosition::z",
     "label": "Z mm",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
@@ -118,7 +118,7 @@
     "name": "stActualPosition::a",
     "label": "A °",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
@@ -149,7 +149,7 @@
     "name": "stActualPosition::b",
     "label": "B °",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
@@ -180,7 +180,7 @@
     "name": "stActualPosition::c",
     "label": "C °",
     "control": "TextBlock",
-    "width": 70,
+    "width": 150,
     "widthUnit": "px",
     "resize": false,
     "sortable": false,
