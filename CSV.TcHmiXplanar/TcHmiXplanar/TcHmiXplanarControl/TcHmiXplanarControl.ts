@@ -112,7 +112,6 @@ module TcHmi {
                 protected __sXplanarGetTrack     : string = "%s%PLC1.GVL_HMI.stXplanar::bGetTrack%/s%";
                 protected __sXplanarClearTrack   : string = "%s%PLC1.GVL_HMI.stXplanar::bClearTrack%/s%";
 
-
 				/**
                   * If raised, the control object exists in control cache and constructor of each inheritation level was called.
                   * Call attribute processor functions here to initialize default values!
@@ -137,7 +136,6 @@ module TcHmi {
                  */
                 public __init() {
                     super.__init();   
-
                 }
 
                 /**
@@ -390,8 +388,8 @@ module TcHmi {
                         // Mover params
                         let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
                         let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
-                        let strMoverTextName = this.__moverText + String(i + 1);
                         let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
+                        let strMoverTextName = this.__moverText + String(i + 1);
                         let strMoverImageSrc = this.__moverImageSrc;
 
                         // Dimension
@@ -510,7 +508,6 @@ module TcHmi {
                 // Get track //
                 //-----------//
                 private M_GetTrack(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
-
                     console.log(__stXplanar);
 
                     // Xplanar control
@@ -532,6 +529,9 @@ module TcHmi {
                     this.__arrTrackIndex.sort();
 
                     // Add offset based upon current screen resolution
+                    let displayOffset = __stXplanar.astMoverDimension[0].nHeightY;
+
+                    /*
                     let deltaHeight = 0;
                     let heightOffset = 0;
                     let displayOffset = 0;
@@ -548,6 +548,7 @@ module TcHmi {
                         heightOffset = 0;
                         displayOffset = 0;
                     }
+                    */
 
                     // Loop tracks defined
                     for (let i = 0; i < this.__arrTrackIndex.length; i++) {
@@ -563,18 +564,16 @@ module TcHmi {
                                 this.__arrPointType[p] = pointType;
                                 // Transform from y to y'
                                 this.__arrPoint[p].x = point.x;
-                                this.__arrPoint[p].y = 2 * this.__canvasElement.height - point.y + heightOffset;
+                                this.__arrPoint[p].y = point.y;
+                                //this.__arrPoint[p].y = 2 * this.__canvasElement.height - point.y + heightOffset;
                                 // Set type & color
                                 this.__arrMarkerType[p] = markerType;
                                 this.__arrMarkerColor[p] = markerColor;
                             }
-                        }
+                        }                   
+       
                         // Draw
-                        console.log(this.__ctx);
-                        console.log(this.__canvasElement);
-                        console.log(this.__arrPoint);
-
-                        this.M_DrawLines(this.__ctx, this.__canvasElement, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
+                        this.M_DrawLines(this.__ctx, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
                     }
                 }
 
@@ -586,31 +585,426 @@ module TcHmi {
                     this.__ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
                 }
 
+                //-------------//
+                // Draw method //
+                //-------------//
+                private M_DrawLines(__ctx: CanvasRenderingContext2D, __arrPoint: Array<any>, __arrPointType: Array<any>, __arrMarkerType: Array<any>, __arrMarkerColor: Array<any>, __trackIndex: number, __scaleFactor: number, __displayOffset: number,) {
+                    // Initialize temporary variables
+                    let point1 = null;
+                    let point2 = null;
+                    let point3 = null;
+                    let pointType1 = null;
+                    let pointType2 = null;
+                    let pointType3 = null;
+                    let markerType1 = null;
+                    let markerType2 = null;
+                    let markerType3 = null;
+                    let markerColor1 = null;
+                    let markerColor2 = null;
+                    let markerColor3 = null;
+                    let point1_prime = null;
+                    let point2_prime = null;
+                    let point3_prime = null;
 
+                    // Loop
+                    for (let p = 0; p < __arrPoint.length; p++) {
+                        // Case
+                        switch (__arrPointType[p]) {
+                            // Single_Point
+                            case 0:
+                                point1 = __arrPoint[p];
+                                pointType1 = __arrPointType[p];
+                                markerType1 = __arrMarkerType[p];
+                                markerColor1 = __arrMarkerColor[p];
 
-                /*
-                 * 
-                 * TO FIX!!!!
-                 * 
-                 * 
+                                // Avoid undefined points
+                                if (point1 !== undefined) {
+                                    // Rescale points
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point1.y - __displayOffset };
+
+                                    // Text field   
+                                    this.M_TrackPointText(__ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
+
+                                    // Draw first point
+                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                }
+                                break;
+
+                            // Line_Start
+                            case 1:
+                                point1 = __arrPoint[p];
+                                point2 = __arrPoint[p + 1];
+                                pointType1 = __arrPointType[p];
+                                pointType2 = __arrPointType[p + 1];
+                                markerType1 = __arrMarkerType[p];
+                                markerType2 = __arrMarkerType[p + 1];
+                                markerColor1 = __arrMarkerColor[p];
+                                markerColor2 = __arrMarkerColor[p + 1];
+
+                                // Avoid undefined points
+                                if (point1 !== undefined && point2 !== undefined) {
+                                    // Rescale points
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point1.y - __displayOffset };
+                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point2.y - __displayOffset };
+
+                                    // Text field    
+                                    this.M_TrackLineText(__ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
+   
+                                    // Draw points
+                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackPoint(__ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor)
+
+                                    // Draw line
+                                    this.M_TrackLine(__ctx, point1_prime, point2_prime, pointType1, pointType2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                }
+                                break;
+
+                            // Circle_Start
+                            case 3:
+                                point1 = __arrPoint[p];
+                                point2 = __arrPoint[p + 1];
+                                point3 = __arrPoint[p + 2];
+                                pointType1 = __arrPointType[p];
+                                pointType2 = __arrPointType[p + 1];
+                                pointType3 = __arrPointType[p + 2];
+                                markerType1 = __arrMarkerType[p];
+                                markerType2 = __arrMarkerType[p + 1];
+                                markerType3 = __arrMarkerType[p + 2];
+                                markerColor1 = __arrMarkerColor[p];
+                                markerColor2 = __arrMarkerColor[p + 1];
+                                markerColor3 = __arrMarkerColor[p + 2];
+
+                                // Avoid undefined points
+                                if (point1 !== undefined && point2 !== undefined && point3 !== undefined) {
+                                    // Rescale points
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
+                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: point2.y * (1 / __scaleFactor) };
+                                    point3_prime = { x: point3.x * (1 / __scaleFactor), y: point3.y * (1 / __scaleFactor) };
+
+                                    // Text field      
+                                    this.M_TrackPointText(__ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
+                                    this.M_TrackPointText(__ctx, point2_prime, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
+                                    this.M_TrackPointText(__ctx, point3_prime, markerType3, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
+
+                                    // Draw points
+                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackPoint(__ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackPoint(__ctx, point3_prime, markerType3, markerColor3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+
+                                    // Draw line
+                                    this.M_TrackCircle(__ctx, point1_prime, point2_prime, point3_prime, pointType1, pointType2, pointType3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                }
+                                break;
+
+                            // Default
+                            default:
+                                break;
+                        }
+                    }
+                }
+
                 //----------------//
-                // Window rescale //
+                // Point methods  //
                 //----------------//
-     
-                window.addEventListener("resize", function(data) {
-                    F_RebuildTracks();
-                });
-                */
 
-                /*
-                //-----------//
-                // Get track // 
-                //-----------//
+                // Track point
+                private M_TrackPoint(__ctx: CanvasRenderingContext2D, __point: any, __markerType: string, __markerColor: number, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: number) {
+                    // Convert enumrations to string
+                    let strMarkerType = __markerType;
+                    let strMarkerColor = this.M_TrackPointColor(__markerColor);
 
-                TcHmi.EventProvider.register(strGetTrack + '.onPressed', function (data) {
-                        F_RebuildTracks();
-                });
-                */
+                    // Default circle radius
+                    let radius = __size * (1 / __scaleFactor);
+
+                    // Draw point 
+                    __ctx.beginPath();
+                    __ctx.strokeStyle = strMarkerColor;
+                    __ctx.fillStyle = strMarkerColor;
+                    __ctx.setLineDash([]);
+                    __ctx.lineWidth = 2;
+                    if (!(strMarkerType.includes('STN')) && !(strMarkerType.includes('QUE'))) {
+                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
+                        __ctx.stroke();
+                    }
+                    else if (strMarkerType.includes('STN')) {
+                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
+                        __ctx.fill();
+                    }
+                    else if (strMarkerType.includes('QUE')) {
+                        __ctx.arc(__point.x, __point.y, radius / 2, 0, 2 * Math.PI, true);
+                        __ctx.stroke();
+                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
+                        __ctx.stroke();
+                    }
+
+                    // Restore
+                    __ctx.restore();
+                }
+
+                // Track point type
+                private M_TrackPointType(__pointIndex: number) : string {
+                    let strResult = '';
+                    // Cases
+                    switch (__pointIndex) {
+                        case 0:
+                            strResult = 'Single_Point';
+                            break;
+                        case 1:
+                            strResult = 'Line_Start';
+                            break;
+                        case 2:
+                            strResult = 'Line_End';
+                            break;
+                        case 3:
+                            strResult = 'Circle_Start';
+                            break;
+                        case 4:
+                            strResult = 'Circle_Center';
+                            break;
+                        case 5:
+                            strResult = 'Circle_End';
+                            break;
+                        default:
+                            strResult = '';
+                            break;
+                    }
+                    return strResult;
+                }
+
+                // Track point color
+                private M_TrackPointColor(__markerIndex: number) : string {
+                    let strResult = '';
+                    // Cases
+                    switch (__markerIndex) {
+                        case 0:
+                            strResult = 'red';
+                            break;
+                        case 1:
+                            strResult = 'green';
+                            break;
+                        case 2:
+                            strResult = 'blue';
+                            break;
+                        case 3:
+                            strResult = 'maroon';
+                            break;
+                        case 4:
+                            strResult = 'teal';
+                            break;
+                        case 5:
+                            strResult = 'navy';
+                            break;
+                        case 6:
+                            strResult = 'purple';
+                            break;
+                        case 7:
+                            strResult = 'olive';
+                            break;
+                        case 8:
+                            strResult = 'orange';
+                            break;
+                        case 9:
+                            strResult = 'fuchsia';
+                            break;
+                        default:
+                            strResult = 'red';
+                            break;
+                    }
+                    return strResult;
+                }
+
+                // Track point text
+                private M_TrackPointText(__ctx: CanvasRenderingContext2D, __point:any, __markerType: string, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
+                    // Font type
+                    __ctx.beginPath();
+                    __ctx.fillStyle = 'black';
+                    __size = __size * (1 / __scaleFactor);
+                    __ctx.font = String(3 * __size) + 'px serif';
+
+                    // Offset scale
+                    let offsetScaleX = 6 * (1 / __scaleFactor);
+                    let offsetScaleY = 54 * (1 / __scaleFactor);
+
+                    // Write texts
+                    let text = '(X: ' + String(Math.floor(__point.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point - __displayOffset) * (__scaleFactor)) + ')';
+                    let offsetX = __point.x + offsetScaleX;
+                    let offsetY = __point.y + offsetScaleY;
+                    __ctx.fillText(text, offsetX, offsetY);
+                    __ctx.fillText(__markerType, offsetX, offsetY - (offsetScaleY / 2));
+
+                    // Restore
+                    __ctx.restore();
+                }
+
+                //--------------//
+                // Line methods //
+                //--------------//
+
+                // Track line
+                private M_TrackLine(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __pointType1: any, __pointType2: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor : number) {
+                    // Convert enumrations to string
+                    let strPointType1 = this.M_TrackPointType(__pointType1);
+                    let strPointType2 = this.M_TrackPointType(__pointType2);
+
+                    // Compute vector if p1 and p2 different
+                    if (strPointType1.includes('Line') && strPointType2.includes('Line')) {
+                        if (__point1.x !== __point2.x || __point1.y !== __point2.y) {
+                            // Translate
+                            __ctx.save();
+                            __ctx.setLineDash([]);
+                            __ctx.translate(__point1.x, __point1.y);
+
+                            // Rotate
+                            let theta = Math.atan2((__point2.y - __point1.y), (__point2.x - __point1.x));
+                            __ctx.rotate(theta);
+
+                            // Line
+                            let hyp = Math.sqrt((__point2.x - __point1.x) * (__point2.x - __point1.x) + (__point2.y - __point1.y) * (__point2.y - __point1.y));
+                            __ctx.beginPath();
+                            __ctx.moveTo(0, 0);
+                            __ctx.lineTo(hyp - __size, 0);
+                            __ctx.strokeStyle = __trackColor;
+                            __ctx.stroke();
+
+                            // Triangle
+                            __ctx.fillStyle = __trackColor;
+                            __ctx.beginPath();
+                            __ctx.lineTo(hyp - __size, __size);
+                            __ctx.lineTo(hyp, 0);
+                            __ctx.lineTo(hyp - __size, -__size);
+                            __ctx.fill();
+
+                            // Restore
+                            __ctx.restore();
+                        }
+                    }
+                }
+
+                // Track line text
+                private M_TrackLineText(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __markerType1: any, __markerType2: any, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
+                    // Convert enumration to string
+                    let strType1 = __markerType1;
+                    let strType2 = __markerType2;
+
+                    // Init positions
+                    let midX = (__point1.x + __point2.x) / 2;
+                    let midY = (__point1.y + __point2.y) / 2;
+
+                    // Font type
+                    __ctx.beginPath();
+                    __ctx.fillStyle = 'black';
+                    __size = __size * (1 / __scaleFactor);
+                    __ctx.font = String(3 * __size) + 'px serif';
+
+                    // Offset scale
+                    let offsetScaleX = 6 * (1 / __scaleFactor);
+                    let offsetScaleY = 54 * (1 / __scaleFactor);
+
+                    // Write texts
+                    let text1 = '(X: ' + String(Math.floor(__point1.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point1.y - __displayOffset) * (__scaleFactor)) + ')';
+                    let text2 = '(X: ' + String(Math.floor(__point2.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point2.y - __displayOffset) * (__scaleFactor)) + ')';
+                    let offsetX1 = __point1.x + offsetScaleX;
+                    let offsetY1 = __point1.y + offsetScaleY;
+                    let offsetX2 = __point2.x + offsetScaleX;
+                    let offsetY2 = __point2.y + offsetScaleY;
+                    __ctx.fillText(text1, offsetX1, offsetY1);
+                    __ctx.fillText(strType1, offsetX1, offsetY1 - (offsetScaleY / 2));
+                    __ctx.fillText(String(__trackIndex), midX + offsetScaleX, midY);
+                    __ctx.fillText(text2, offsetX2, offsetY2);
+                    __ctx.fillText(strType2, offsetX2, offsetY2 - (offsetScaleY / 2));
+
+                    // Restore
+                    __ctx.restore();
+                }
+
+                //----------------//
+                // Circle methods //
+                //----------------//
+
+                // Track circle
+                private M_TrackCircle(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __point3: any, __pointType1: any, __pointType2: any, __pointType3: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: any) {
+                    // Convert enumrations to string
+                    let strPointType1 = this.M_TrackPointType(__pointType1);
+                    let strPointType2 = this.M_TrackPointType(__pointType2);
+                    let strPointType3 = this.M_TrackPointType(__pointType3);
+
+                    // Draw circle
+                    if (strPointType1.includes('Circle') && strPointType2.includes('Circle') && strPointType3.includes('Circle')) {
+                        if (__point1.x !== __point2.x !== __point3.x || __point1.y !== __point2.y !== __point3.y) {
+
+                            // Save
+                            __ctx.save();
+                            __ctx.setLineDash([]);
+
+                            // Computation
+                            let deltaX = __point1.x - __point2.x;
+                            let deltaY = __point1.y - __point2.y;
+                            let startAngle = Math.atan2(deltaY, deltaX);
+                            let endAngle = Math.atan2(__point3.y - __point2.y, __point3.x - __point2.x);
+                            let radius = Math.abs(Math.sqrt(deltaX * deltaX + deltaY * deltaY));
+                            __ctx.strokeStyle = __trackColor;
+
+                            // Draw
+                            if (__point1.y > __point3.y) {
+                                if (__point2.x > __point1.x) {
+                                    let clockWise = false;
+                                    __ctx.beginPath();
+                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                                else if (__point2.x < __point1.x) {
+                                    let clockWise = true;
+                                    __ctx.beginPath();
+                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                                else {
+                                    __ctx.beginPath();
+                                    __ctx.moveTo(__point1.x, __point1.y);
+                                    __ctx.lineTo(__point3.x, __point3.y);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                            }
+                            else if (__point1.y < __point3.y) {
+                                if (__point2.x > __point1.x) {
+                                    let clockWise = true;
+                                    __ctx.beginPath();
+                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                                else if (__point2.x < __point1.x) {
+                                    let clockWise = false;
+                                    __ctx.beginPath();
+                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                                else {
+                                    __ctx.beginPath();
+                                    __ctx.moveTo(__point1.x, __point1.y);
+                                    __ctx.lineTo(__point3.x, __point3.y);
+                                    __ctx.stroke();
+                                    __ctx.closePath();
+                                }
+                            }
+                            else {
+                                __ctx.beginPath();
+                                __ctx.moveTo(__point1.x, __point1.y);
+                                __ctx.lineTo(__point3.x, __point3.y);
+                                __ctx.stroke();
+                                __ctx.closePath();
+                            }
+                        }
+                    }
+                    // Restore
+                    __ctx.restore();
+                }
+
+
 
                 //-----------------------------//
                 // Control Factory Api methods //
@@ -698,420 +1092,9 @@ module TcHmi {
                 }
 
 
-                //-------------//
-                // Draw method //
-                //-------------//
-                private M_DrawLines(__ctx: any, __canvas: any, __arrPoint: Array<any>, __arrPointType: Array<any>, __arrMarkerType: Array<any>, __arrMarkerColor: Array<any>, __trackIndex: number, __scaleFactor: number, __displayOffset: number,) {
-                    // Initialize temporary variables
-                    let point1 = null;
-                    let point2 = null;
-                    let point3 = null;
-                    let pointType1 = null;
-                    let pointType2 = null;
-                    let pointType3 = null;
-                    let markerType1 = null;
-                    let markerType2 = null;
-                    let markerType3 = null;
-                    let markerColor1 = null;
-                    let markerColor2 = null;
-                    let markerColor3 = null;
-                    let point1_prime = null;
-                    let point2_prime = null;
-                    let point3_prime = null;
-
-                    // Loop
-                    for (let p = 0; p < __arrPoint.length; p++) {
-                        // Cases
-                        switch (__arrPointType[p]) {
-                            // Single_Point
-                            case 0:
-                                point1 = __arrPoint[p];
-                                pointType1 = __arrPointType[p];
-                                markerType1 = __arrMarkerType[p];
-                                markerColor1 = __arrMarkerColor[p];
-
-                                // Avoid undefined points
-                                if (point1 !== undefined) {
-                                    // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
-
-                                    // Text field   
-                                    this.M_TrackPointText(__ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
-
-                                    // Draw first point
-                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                }
-                                break;
-
-                            // Line_Start
-                            case 1:
-                                point1 = __arrPoint[p];
-                                point2 = __arrPoint[p + 1];
-                                pointType1 = __arrPointType[p];
-                                pointType2 = __arrPointType[p + 1];
-                                markerType1 = __arrMarkerType[p];
-                                markerType2 = __arrMarkerType[p + 1];
-                                markerColor1 = __arrMarkerColor[p];
-                                markerColor2 = __arrMarkerColor[p + 1];
-
-                                // Avoid undefined points
-                                if (point1 !== undefined && point2 !== undefined) {
-                                    // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: point2.y * (1 / __scaleFactor) };
-
-                                    // Text field    
-                                    this.M_TrackLineText(__ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
-   
-                                    // Draw points
-                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(__ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor)
-
-                                    // Draw line
-                                    this.M_TrackLine(__ctx, point1_prime, point2_prime, pointType1, pointType2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                }
-                                break;
-
-                            // Line_End
-                            case 2:
-                                // Next index in for-statement
-                                break;
-
-                            // Circle_Start
-                            case 3:
-                                point1 = __arrPoint[p];
-                                point2 = __arrPoint[p + 1];
-                                point3 = __arrPoint[p + 2];
-                                pointType1 = __arrPointType[p];
-                                pointType2 = __arrPointType[p + 1];
-                                pointType3 = __arrPointType[p + 2];
-                                markerType1 = __arrMarkerType[p];
-                                markerType2 = __arrMarkerType[p + 1];
-                                markerType3 = __arrMarkerType[p + 2];
-                                markerColor1 = __arrMarkerColor[p];
-                                markerColor2 = __arrMarkerColor[p + 1];
-                                markerColor3 = __arrMarkerColor[p + 2];
-
-                                // Avoid undefined points
-                                if (point1 !== undefined && point2 !== undefined && point3 !== undefined) {
-                                    // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: point2.y * (1 / __scaleFactor) };
-                                    point3_prime = { x: point3.x * (1 / __scaleFactor), y: point3.y * (1 / __scaleFactor) };
-
-                                    // Text field      
-                                    this.M_TrackPointText(__ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
-                                    this.M_TrackPointText(__ctx, point2_prime, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
-                                    this.M_TrackPointText(__ctx, point3_prime, markerType3, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
-
-                                    // Draw points
-                                    this.M_TrackPoint(__ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(__ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(__ctx, point3_prime, markerType3, markerColor3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-
-                                    // Draw line
-                                    this.M_TrackCircle(__ctx, point1_prime, point2_prime, point3_prime, pointType1, pointType2, pointType3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                }
-                                break;
-
-                            // Default
-                            default:
-                                break;
-                        }
-                    }
-                }
 
 
-                //----------------//
-                // Point methods  //
-                //----------------//
-                private M_TrackPoint(__ctx: any, __point: any, __markerType: string, __markerColor: number, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: number) {
-                    // Convert enumrations to string
-                    let strMarkerType = __markerType;
-                    let strMarkerColor = this.M_TrackPointColor(__markerColor);
 
-                    // Default circle radius
-                    let radius = __size * (1 / __scaleFactor);
-
-                    // Draw point 
-                    __ctx.beginPath();
-                    __ctx.strokeStyle = strMarkerColor;
-                    __ctx.fillStyle = strMarkerColor;
-                    __ctx.setLineDash([]);
-                    __ctx.lineWidth = 2;
-                    if (!(strMarkerType.includes('STN')) && !(strMarkerType.includes('QUE'))) {
-                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
-                        __ctx.stroke();
-                    }
-                    else if (strMarkerType.includes('STN')) {
-                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
-                        __ctx.fill();
-                    }
-                    else if (strMarkerType.includes('QUE')) {
-                        __ctx.arc(__point.x, __point.y, radius / 2, 0, 2 * Math.PI, true);
-                        __ctx.stroke();
-                        __ctx.arc(__point.x, __point.y, radius, 0, 2 * Math.PI, true);
-                        __ctx.stroke();
-                    }
-
-                    // Restore
-                    __ctx.restore();
-                }
-
-                private M_TrackPointType(__pointIndex: number) : string {
-                    let strResult = '';
-                    // Cases
-                    switch (__pointIndex) {
-                        case 0:
-                            strResult = 'Single_Point';
-                            break;
-                        case 1:
-                            strResult = 'Line_Start';
-                            break;
-                        case 2:
-                            strResult = 'Line_End';
-                            break;
-                        case 3:
-                            strResult = 'Circle_Start';
-                            break;
-                        case 4:
-                            strResult = 'Circle_Center';
-                            break;
-                        case 5:
-                            strResult = 'Circle_End';
-                            break;
-                        default:
-                            strResult = 'Single_Point';
-                            break;
-                    }
-                    return strResult;
-                }
-
-                private M_TrackPointColor(__markerIndex: number) : string {
-                    let strResult = '';
-                    // Cases
-                    switch (__markerIndex) {
-                        case 0:
-                            strResult = 'red';
-                            break;
-                        case 1:
-                            strResult = 'green';
-                            break;
-                        case 2:
-                            strResult = 'blue';
-                            break;
-                        case 3:
-                            strResult = 'maroon';
-                            break;
-                        case 4:
-                            strResult = 'teal';
-                            break;
-                        case 5:
-                            strResult = 'navy';
-                            break;
-                        case 6:
-                            strResult = 'purple';
-                            break;
-                        case 7:
-                            strResult = 'olive';
-                            break;
-                        case 8:
-                            strResult = 'orange';
-                            break;
-                        case 9:
-                            strResult = 'fuchsia';
-                            break;
-                        default:
-                            strResult = 'red';
-                            break;
-                    }
-                    return strResult;
-                }
-
-                private M_TrackPointText(__ctx:any, __point:any, __markerType: string, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
-                    // Font type
-                    __ctx.beginPath();
-                    __ctx.fillStyle = 'black';
-                    __size = __size * (1 / __scaleFactor);
-                    __ctx.font = String(3 * __size) + 'px serif';
-
-                    // Offset scale
-                    let offsetScaleX = 6 * (1 / __scaleFactor);
-                    let offsetScaleY = 54 * (1 / __scaleFactor);
-                    let midPlanarTile = 120;
-
-                    // Write texts
-                    let text = '(X: ' + String(Math.floor(__point.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
-                    let offsetX = __point.x + offsetScaleX;
-                    let offsetY = __point.y + offsetScaleY;
-                    __ctx.fillText(text, offsetX, offsetY);
-                    __ctx.fillText(__markerType, offsetX, offsetY - (offsetScaleY / 2));
-
-                    // Restore
-                    __ctx.restore();
-                }
-
-                //--------------//
-                // Line methods //
-                //--------------//
-
-                private M_TrackLine(__ctx: any, __point1: any, __point2: any, __pointType1: any, __pointType2: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor : number) {
-                    // Convert enumrations to string
-                    let strPointType1 = this.M_TrackPointType(__pointType1);
-                    let strPointType2 = this.M_TrackPointType(__pointType2);
-
-                    // Compute vector if p1 and p2 different
-                    if (strPointType1.includes('Line') && strPointType2.includes('Line')) {
-                        if (__point1.x !== __point2.x || __point1.y !== __point2.y) {
-                            // Translate
-                            __ctx.save();
-                            __ctx.setLineDash([]);
-                            __ctx.translate(__point1.x, __point1.y);
-
-                            // Line
-                            let hyp = Math.sqrt((__point2.x - __point1.x) * (__point2.x - __point1.x) + (__point2.y - __point1.y) * (__point2.y - __point1.y));
-                            __ctx.beginPath();
-                            __ctx.moveTo(0, 0);
-                            __ctx.lineTo(hyp - __size, 0);
-                            __ctx.strokeStyle = __trackColor;
-                            __ctx.stroke();
-
-                            // Triangle
-                            __ctx.fillStyle = __trackColor;
-                            __ctx.beginPath();
-                            __ctx.lineTo(hyp - __size, __size);
-                            __ctx.lineTo(hyp, 0);
-                            __ctx.lineTo(hyp - __size, -__size);
-                            __ctx.fill();
-
-                            // Restore
-                            __ctx.restore();
-                        }
-                    }
-                }
-
-                private M_TrackLineText(__ctx: any, __point1: any, __point2: any, __markerType1: any, __markerType2: any, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
-                    // Convert enumration to string
-                    let strType1 = __markerType1;
-                    let strType2 = __markerType2;
-
-                    // Init positions
-                    let midX = (__point1.x + __point2.x) / 2;
-                    let midY = (__point1.y + __point2.y) / 2;
-                    let midPlanarTile = 120;
-
-                    // Font type
-                    __ctx.beginPath();
-                    __ctx.fillStyle = 'black';
-                    __size = __size * (1 / __scaleFactor);
-                    __ctx.font = String(3 * __size) + 'px serif';
-
-                    // Offset scale
-                    let offsetScaleX = 6 * (1 / __scaleFactor);
-                    let offsetScaleY = 54 * (1 / __scaleFactor);
-
-                    // Write texts
-                    let text1 = '(X: ' + String(Math.floor(__point1.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point1.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
-                    let text2 = '(X: ' + String(Math.floor(__point2.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point2.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
-                    let offsetX1 = __point1.x + offsetScaleX;
-                    let offsetY1 = __point1.y + offsetScaleY;
-                    let offsetX2 = __point2.x + offsetScaleX;
-                    let offsetY2 = __point2.y + offsetScaleY;
-                    __ctx.fillText(text1, offsetX1, offsetY1);
-                    __ctx.fillText(strType1, offsetX1, offsetY1 - (offsetScaleY / 2));
-                    __ctx.fillText(String(__trackIndex), midX + offsetScaleX, midY);
-                    __ctx.fillText(text2, offsetX2, offsetY2);
-                    __ctx.fillText(strType2, offsetX2, offsetY2 - (offsetScaleY / 2));
-
-                    // Restore
-                    __ctx.restore();
-                }
-
-                //----------------//
-                // Circle methods //
-                //----------------//
-
-                private M_TrackCircle(__ctx: any, __point1: any, __point2: any, __point3: any, __pointType1: any, __pointType2: any, __pointType3: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: any) {
-                    // Convert enumrations to string
-                    let strPointType1 = this.M_TrackPointType(__pointType1);
-                    let strPointType2 = this.M_TrackPointType(__pointType2);
-                    let strPointType3 = this.M_TrackPointType(__pointType3);
-
-                    // Draw circle
-                    if (strPointType1.includes('Circle') && strPointType2.includes('Circle') && strPointType3.includes('Circle')) {
-                        if (__point1.x !== __point2.x !== __point3.x || __point1.y !== __point2.y !== __point3.y) {
-
-                            // Save
-                            __ctx.save();
-                            __ctx.setLineDash([]);
-
-                            // Computation
-                            let deltaX = __point1.x - __point2.x;
-                            let deltaY = __point1.y - __point2.y;
-                            let startAngle = Math.atan2(deltaY, deltaX);
-                            let endAngle = Math.atan2(__point3.y - __point2.y, __point3.x - __point2.x);
-                            let radius = Math.abs(Math.sqrt(deltaX * deltaX + deltaY * deltaY));
-                            __ctx.strokeStyle = __trackColor;
-
-                            // Draw
-                            if (__point1.y > __point3.y) {
-                                if (__point2.x > __point1.x) {
-                                    let clockWise = false;
-                                    __ctx.beginPath();
-                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                                else if (__point2.x < __point1.x) {
-                                    let clockWise = true;
-                                    __ctx.beginPath();
-                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                                else {
-                                    __ctx.beginPath();
-                                    __ctx.moveTo(__point1.x, __point1.y);
-                                    __ctx.lineTo(__point3.x, __point3.y);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                            }
-                            else if (__point1.y < __point3.y) {
-                                if (__point2.x > __point1.x) {
-                                    let clockWise = true;
-                                    __ctx.beginPath();
-                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                                else if (__point2.x < __point1.x) {
-                                    let clockWise = false;
-                                    __ctx.beginPath();
-                                    __ctx.arc(__point2.x, __point2.y, radius, startAngle, endAngle, clockWise);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                                else {
-                                    __ctx.beginPath();
-                                    __ctx.moveTo(__point1.x, __point1.y);
-                                    __ctx.lineTo(__point3.x, __point3.y);
-                                    __ctx.stroke();
-                                    __ctx.closePath();
-                                }
-                            }
-                            else {
-                                __ctx.beginPath();
-                                __ctx.moveTo(__point1.x, __point1.y);
-                                __ctx.lineTo(__point3.x, __point3.y);
-                                __ctx.stroke();
-                                __ctx.closePath();
-                            }
-                        }
-                    }
-                    // Restore
-                    __ctx.restore();
-                }
 
             }
         }

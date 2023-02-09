@@ -295,8 +295,8 @@ var TcHmi;
                         // Mover params
                         let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
                         let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
-                        let strMoverTextName = this.__moverText + String(i + 1);
                         let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
+                        let strMoverTextName = this.__moverText + String(i + 1);
                         let strMoverImageSrc = this.__moverImageSrc;
                         // Dimension
                         let width = this.__stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
@@ -417,6 +417,8 @@ var TcHmi;
                     // Sort index buffer in ascending order
                     this.__arrTrackIndex.sort();
                     // Add offset based upon current screen resolution
+                    let displayOffset = __stXplanar.astMoverDimension[0].nHeightY;
+                    /*
                     let deltaHeight = 0;
                     let heightOffset = 0;
                     let displayOffset = 0;
@@ -433,6 +435,7 @@ var TcHmi;
                         heightOffset = 0;
                         displayOffset = 0;
                     }
+                    */
                     // Loop tracks defined
                     for (let i = 0; i < this.__arrTrackIndex.length; i++) {
                         let tempTrackIndex = this.__arrTrackIndex[i];
@@ -447,17 +450,15 @@ var TcHmi;
                                 this.__arrPointType[p] = pointType;
                                 // Transform from y to y'
                                 this.__arrPoint[p].x = point.x;
-                                this.__arrPoint[p].y = 2 * this.__canvasElement.height - point.y + heightOffset;
+                                this.__arrPoint[p].y = point.y;
+                                //this.__arrPoint[p].y = 2 * this.__canvasElement.height - point.y + heightOffset;
                                 // Set type & color
                                 this.__arrMarkerType[p] = markerType;
                                 this.__arrMarkerColor[p] = markerColor;
                             }
                         }
                         // Draw
-                        console.log(this.__ctx);
-                        console.log(this.__canvasElement);
-                        console.log(this.__arrPoint);
-                        this.M_DrawLines(this.__ctx, this.__canvasElement, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
+                        this.M_DrawLines(this.__ctx, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
                     }
                 }
                 // Clear track
@@ -467,96 +468,10 @@ var TcHmi;
                     // Clear ctx
                     this.__ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
                 }
-                /*
-                 *
-                 * TO FIX!!!!
-                 *
-                 *
-                //----------------//
-                // Window rescale //
-                //----------------//
-     
-                window.addEventListener("resize", function(data) {
-                    F_RebuildTracks();
-                });
-                */
-                /*
-                //-----------//
-                // Get track //
-                //-----------//
-
-                TcHmi.EventProvider.register(strGetTrack + '.onPressed', function (data) {
-                        F_RebuildTracks();
-                });
-                */
-                //-----------------------------//
-                // Control Factory Api methods //
-                //-----------------------------//
-                // Mover frame
-                M_CreateMoverFrame(__controlID, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.System.TcHmiContainer', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': {
-                            'color': 'rgba(145, 145, 145, 1)'
-                        },
-                        'data-tchmi-border-color': {
-                            'color': 'rgba(0,0,0,1)'
-                        },
-                        'data-tchmi-zindex': 100
-                    }, this // Marks this control as the parent 
-                    );
-                }
-                // Mover text
-                M_CreateMoverText(__controlID, __controlName, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiTextblock', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': {
-                            'color': 'rgba(0, 0, 0, 0)'
-                        },
-                        'data-tchmi-text-color': this.__moverTextColor,
-                        'data-tchmi-text': __controlName,
-                        'data-tchmi-text-vertical-alignment': 'Center',
-                        'data-tchmi-text-horizontal-alignment': 'Center',
-                        'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
-                        'data-tchmi-zindex': 120
-                    });
-                }
-                // Mover image
-                M_CreateMoverImage(__controlID, __imageSrc, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiImage', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width - this.__borderOffset * (1 / this.__scaleFactor),
-                        'data-tchmi-height': __height - this.__borderOffset * (1 / this.__scaleFactor),
-                        'data-tchmi-src': __imageSrc,
-                        'data-tchmi-zindex': 110
-                    });
-                }
-                // Tile frame
-                M_CreateTileFrame(__controlID, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiRectangle', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': this.__tileBackgroundColor,
-                        'data-tchmi-border-color': {
-                            'color': 'rgba(0,0,0,1)'
-                        },
-                        'data-tchmi-zindex': 50
-                    }, this // Marks this control as the parent 
-                    );
-                }
                 //-------------//
                 // Draw method //
                 //-------------//
-                M_DrawLines(__ctx, __canvas, __arrPoint, __arrPointType, __arrMarkerType, __arrMarkerColor, __trackIndex, __scaleFactor, __displayOffset) {
+                M_DrawLines(__ctx, __arrPoint, __arrPointType, __arrMarkerType, __arrMarkerColor, __trackIndex, __scaleFactor, __displayOffset) {
                     // Initialize temporary variables
                     let point1 = null;
                     let point2 = null;
@@ -575,7 +490,7 @@ var TcHmi;
                     let point3_prime = null;
                     // Loop
                     for (let p = 0; p < __arrPoint.length; p++) {
-                        // Cases
+                        // Case
                         switch (__arrPointType[p]) {
                             // Single_Point
                             case 0:
@@ -586,7 +501,7 @@ var TcHmi;
                                 // Avoid undefined points
                                 if (point1 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point1.y - __displayOffset };
                                     // Text field   
                                     this.M_TrackPointText(__ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
                                     // Draw first point
@@ -606,8 +521,8 @@ var TcHmi;
                                 // Avoid undefined points
                                 if (point1 !== undefined && point2 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: point1.y * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: point2.y * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point1.y - __displayOffset };
+                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: this.__defaultWindowHeight - point2.y - __displayOffset };
                                     // Text field    
                                     this.M_TrackLineText(__ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
                                     // Draw points
@@ -616,10 +531,6 @@ var TcHmi;
                                     // Draw line
                                     this.M_TrackLine(__ctx, point1_prime, point2_prime, pointType1, pointType2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
                                 }
-                                break;
-                            // Line_End
-                            case 2:
-                                // Next index in for-statement
                                 break;
                             // Circle_Start
                             case 3:
@@ -662,6 +573,7 @@ var TcHmi;
                 //----------------//
                 // Point methods  //
                 //----------------//
+                // Track point
                 M_TrackPoint(__ctx, __point, __markerType, __markerColor, __trackIndex, __trackColor, __size, __scaleFactor) {
                     // Convert enumrations to string
                     let strMarkerType = __markerType;
@@ -691,6 +603,7 @@ var TcHmi;
                     // Restore
                     __ctx.restore();
                 }
+                // Track point type
                 M_TrackPointType(__pointIndex) {
                     let strResult = '';
                     // Cases
@@ -714,11 +627,12 @@ var TcHmi;
                             strResult = 'Circle_End';
                             break;
                         default:
-                            strResult = 'Single_Point';
+                            strResult = '';
                             break;
                     }
                     return strResult;
                 }
+                // Track point color
                 M_TrackPointColor(__markerIndex) {
                     let strResult = '';
                     // Cases
@@ -759,6 +673,7 @@ var TcHmi;
                     }
                     return strResult;
                 }
+                // Track point text
                 M_TrackPointText(__ctx, __point, __markerType, __trackIndex, __size, __scaleFactor, __displayOffset) {
                     // Font type
                     __ctx.beginPath();
@@ -768,9 +683,8 @@ var TcHmi;
                     // Offset scale
                     let offsetScaleX = 6 * (1 / __scaleFactor);
                     let offsetScaleY = 54 * (1 / __scaleFactor);
-                    let midPlanarTile = 120;
                     // Write texts
-                    let text = '(X: ' + String(Math.floor(__point.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
+                    let text = '(X: ' + String(Math.floor(__point.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point - __displayOffset) * (__scaleFactor)) + ')';
                     let offsetX = __point.x + offsetScaleX;
                     let offsetY = __point.y + offsetScaleY;
                     __ctx.fillText(text, offsetX, offsetY);
@@ -781,6 +695,7 @@ var TcHmi;
                 //--------------//
                 // Line methods //
                 //--------------//
+                // Track line
                 M_TrackLine(__ctx, __point1, __point2, __pointType1, __pointType2, __trackIndex, __trackColor, __size, __scaleFactor) {
                     // Convert enumrations to string
                     let strPointType1 = this.M_TrackPointType(__pointType1);
@@ -792,6 +707,9 @@ var TcHmi;
                             __ctx.save();
                             __ctx.setLineDash([]);
                             __ctx.translate(__point1.x, __point1.y);
+                            // Rotate
+                            let theta = Math.atan2((__point2.y - __point1.y), (__point2.x - __point1.x));
+                            __ctx.rotate(theta);
                             // Line
                             let hyp = Math.sqrt((__point2.x - __point1.x) * (__point2.x - __point1.x) + (__point2.y - __point1.y) * (__point2.y - __point1.y));
                             __ctx.beginPath();
@@ -811,6 +729,7 @@ var TcHmi;
                         }
                     }
                 }
+                // Track line text
                 M_TrackLineText(__ctx, __point1, __point2, __markerType1, __markerType2, __trackIndex, __size, __scaleFactor, __displayOffset) {
                     // Convert enumration to string
                     let strType1 = __markerType1;
@@ -818,7 +737,6 @@ var TcHmi;
                     // Init positions
                     let midX = (__point1.x + __point2.x) / 2;
                     let midY = (__point1.y + __point2.y) / 2;
-                    let midPlanarTile = 120;
                     // Font type
                     __ctx.beginPath();
                     __ctx.fillStyle = 'black';
@@ -828,8 +746,8 @@ var TcHmi;
                     let offsetScaleX = 6 * (1 / __scaleFactor);
                     let offsetScaleY = 54 * (1 / __scaleFactor);
                     // Write texts
-                    let text1 = '(X: ' + String(Math.floor(__point1.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point1.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
-                    let text2 = '(X: ' + String(Math.floor(__point2.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(window.innerHeight - __point2.y - midPlanarTile + __displayOffset) * (__scaleFactor)) + ')';
+                    let text1 = '(X: ' + String(Math.floor(__point1.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point1.y - __displayOffset) * (__scaleFactor)) + ')';
+                    let text2 = '(X: ' + String(Math.floor(__point2.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point2.y - __displayOffset) * (__scaleFactor)) + ')';
                     let offsetX1 = __point1.x + offsetScaleX;
                     let offsetY1 = __point1.y + offsetScaleY;
                     let offsetX2 = __point2.x + offsetScaleX;
@@ -845,6 +763,7 @@ var TcHmi;
                 //----------------//
                 // Circle methods //
                 //----------------//
+                // Track circle
                 M_TrackCircle(__ctx, __point1, __point2, __point3, __pointType1, __pointType2, __pointType3, __trackIndex, __trackColor, __size, __scaleFactor) {
                     // Convert enumrations to string
                     let strPointType1 = this.M_TrackPointType(__pointType1);
@@ -921,6 +840,70 @@ var TcHmi;
                     }
                     // Restore
                     __ctx.restore();
+                }
+                //-----------------------------//
+                // Control Factory Api methods //
+                //-----------------------------//
+                // Mover frame
+                M_CreateMoverFrame(__controlID, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.System.TcHmiContainer', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': {
+                            'color': 'rgba(145, 145, 145, 1)'
+                        },
+                        'data-tchmi-border-color': {
+                            'color': 'rgba(0,0,0,1)'
+                        },
+                        'data-tchmi-zindex': 100
+                    }, this // Marks this control as the parent 
+                    );
+                }
+                // Mover text
+                M_CreateMoverText(__controlID, __controlName, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiTextblock', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': {
+                            'color': 'rgba(0, 0, 0, 0)'
+                        },
+                        'data-tchmi-text-color': this.__moverTextColor,
+                        'data-tchmi-text': __controlName,
+                        'data-tchmi-text-vertical-alignment': 'Center',
+                        'data-tchmi-text-horizontal-alignment': 'Center',
+                        'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
+                        'data-tchmi-zindex': 120
+                    });
+                }
+                // Mover image
+                M_CreateMoverImage(__controlID, __imageSrc, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiImage', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width - this.__borderOffset * (1 / this.__scaleFactor),
+                        'data-tchmi-height': __height - this.__borderOffset * (1 / this.__scaleFactor),
+                        'data-tchmi-src': __imageSrc,
+                        'data-tchmi-zindex': 110
+                    });
+                }
+                // Tile frame
+                M_CreateTileFrame(__controlID, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiRectangle', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': this.__tileBackgroundColor,
+                        'data-tchmi-border-color': {
+                            'color': 'rgba(0,0,0,1)'
+                        },
+                        'data-tchmi-zindex': 50
+                    }, this // Marks this control as the parent 
+                    );
                 }
             }
             TcHmiXplanar.TcHmiXplanarControl = TcHmiXplanarControl;
