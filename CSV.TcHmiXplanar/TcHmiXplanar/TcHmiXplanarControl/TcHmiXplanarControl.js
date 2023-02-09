@@ -44,15 +44,23 @@ var TcHmi;
                     this.__defaultWindowHeight = 1080;
                     this.__defaultCanvasHeight = 1080;
                     this.__trackSize = 8;
+                    this.__arrTrackIndex = [];
+                    this.__arrPoint = [];
+                    this.__arrPointType = [];
+                    this.__arrMarkerType = [];
+                    this.__arrMarkerColor = [];
                     this.__arrTrackColor = ['blue', 'green', 'teal', 'maroon', 'orange',
                         'navy', ' purple', 'fuchsia', 'olive', 'pink',
                         'yellow', 'purple', 'black', 'gray', 'cyan',
                         'blue', 'green', 'teal', 'maroon', 'orange'];
                     // Mover params
-                    this.__moverText = 'M';
+                    this.__moverText = '';
                     // Tile params
                     this.__tileWidth = 240;
                     this.__tileHeight = 240;
+                    // PLC
+                    this.__sXplanarGetTrack = "%s%PLC1.GVL_HMI.stXplanar::bGetTrack%/s%";
+                    this.__sXplanarClearTrack = "%s%PLC1.GVL_HMI.stXplanar::bClearTrack%/s%";
                 }
                 /**
                   * If raised, the control object exists in control cache and constructor of each inheritation level was called.
@@ -64,6 +72,9 @@ var TcHmi;
                     if (this.__elementTemplateRoot.length === 0) {
                         throw new Error('Invalid Template.html');
                     }
+                    // Initialize html components
+                    this.__canvasHtml = this.__elementTemplateRoot.find('canvas');
+                    this.__canvasElement = this.__canvasHtml[0];
                     // Call __previnit of base class
                     super.__previnit();
                 }
@@ -103,15 +114,15 @@ var TcHmi;
                     super.destroy();
                 }
                 /**
-                * Gets the value of __tileImageSrc
-                * @returns The current value of TileImageSrc
+                * Gets the value of __moverImageSrc
+                * @returns The current value of MoverImageSrc
                 */
                 M_GetMoverImageSrc() {
                     return this.__moverImageSrc;
                 }
                 /**
                 * Sets the value of __moverImageSrc
-                * @param valueNew The new value for TíleImageSrc
+                * @param valueNew The new value for MoverImageSrc
                 */
                 M_SetMoverImageSrc(valueNew) {
                     // Convert the value
@@ -133,8 +144,8 @@ var TcHmi;
                     return this.__scaleFactor;
                 }
                 /**
-                * Sets the value of __moverImageSrc
-                * @param valueNew The new value for TíleImageSrc
+                * Sets the value of __scaleFactor
+                * @param valueNew The new value for ScaleFactor
                 */
                 M_SetScaleFactor(valueNew) {
                     // Convert the value
@@ -156,8 +167,8 @@ var TcHmi;
                     return this.__trackIndex;
                 }
                 /**
-                * Sets the value of __moverImageSrc
-                * @param valueNew The new value for TíleImageSrc
+                * Sets the value of __trackIndex
+                * @param valueNew The new value for TrackIndex
                 */
                 M_SetTrackIndex(valueNew) {
                     // Convert the value
@@ -170,20 +181,17 @@ var TcHmi;
                     this.__trackIndex = convertedValue;
                     // Inform the system that the function has a a changed result
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetTrackIndex"]);
-                    /* TODO!!!!!
-                        this.M_GenerateTrack();
-                    */
                 }
                 /**
-                * Gets the value of __trackIndex
-                * @returns The current value of TrackIndex
+                * Gets the value of __moverTextColor
+                * @returns The current value of MoverTextColor
                 */
                 M_GetMoverTextColor() {
                     return this.__moverTextColor;
                 }
                 /**
-                * Sets the value of __moverImageSrc
-                * @param valueNew The new value for TíleImageSrc
+                * Sets the value of __moverTextColor
+                * @param valueNew The new value for MoverTextColor
                 */
                 M_SetMoverTextColor(valueNew) {
                     // Convert the value
@@ -198,15 +206,15 @@ var TcHmi;
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverTextColor"]);
                 }
                 /**
-                * Gets the value of __trackIndex
-                * @returns The current value of TrackIndex
+                * Gets the value of __tileBackgroundColor
+                * @returns The current value of TileBackgroundColor
                 */
                 M_GetTileBackgroundColor() {
                     return this.__moverTextColor;
                 }
                 /**
-                * Sets the value of __moverImageSrc
-                * @param valueNew The new value for TíleImageSrc
+                * Sets the value of __tileBackgroundColor
+                * @param valueNew The new value for TileBackgroundColor
                 */
                 M_SetTileBackgroundColor(valueNew) {
                     // Convert the value
@@ -221,8 +229,8 @@ var TcHmi;
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetTileBackgroundColor"]);
                 }
                 /**
-                * Gets the value of __scaleFactor
-                * @returns The current value of ScaleFactor
+                * Gets the value of __stXplanar
+                * @returns The current value of stXplanar
                 */
                 M_GetStXplanar() {
                     return this.__stXplanar;
@@ -239,6 +247,9 @@ var TcHmi;
                         // If we have no value to set we have to fall back to the defaultValueInternal from description.json
                         convertedValue = this.getAttributeDefaultValueInternal('stXplanar');
                     }
+                    else {
+                        this.__refstXplanar = convertedValue;
+                    }
                     // Skip if no value change
                     if (tchmi_equal(convertedValue, this.__stXplanar)) {
                         // Skip processing when the value has not changed
@@ -249,249 +260,214 @@ var TcHmi;
                     // Inform the system that the function has a changed result.
                     TcHmi.EventProvider.raise(this.__id + '.onPropertyChanged', { propertyName: 'stXplanar' });
                     // Call process function to process the new value
-                    this.M_ProcessStXplanar();
+                    this.M_HandleStXplanar(this.__stXplanar);
                 }
                 // Process the stXplanar structure
-                M_ProcessStXplanar() {
-                    // Local params
-                    let offsetWidth = this.__deltaOffsetWidth * (1 / this.__scaleFactor);
-                    let offsetHeight = this.__deltaOffsetHeight * (1 / this.__scaleFactor);
-                    // Defined then run
+                M_HandleStXplanar(__stXplanar) {
+                    // Run when defined structure and valid tile layout
                     if (this.__stXplanar) {
-                        // Only run when valid
                         if (this.__stXplanar.bValid) {
-                            // Loop index
-                            let nTiles = this.__stXplanar.nTileCount;
-                            let nMovers = this.__stXplanar.astMoverDimension.length;
-                            //--------//
-                            // Movers //
-                            //--------//
-                            for (let j = 0; j < nMovers; j++) {
-                                // Mover params
-                                let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(j + 1);
-                                let strMoverTextID = this.__id + '_TcHmiMoverText' + String(j + 1);
-                                let strMoverTextName = this.__moverText + String(j + 1);
-                                let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(j + 1);
-                                let strMoverImageSrc = this.__moverImageSrc;
-                                // Dimension
-                                let width = this.__stXplanar.astMoverDimension[j].nWidthX * (1 / this.__scaleFactor);
-                                let height = this.__stXplanar.astMoverDimension[j].nHeightY * (1 / this.__scaleFactor);
-                                // Quarter
-                                let quarterMoverWidth = (width) * (1 / 4);
-                                let quarterMoverHeight = (height) * (1 / 4);
-                                // Position & rotation
-                                let x = this.__stXplanar.astMoverInfo[j].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
-                                let y = this.__stXplanar.astMoverInfo[j].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
-                                let z = this.__stXplanar.astMoverInfo[j].stActualPosition.z * (1 / this.__scaleFactor);
-                                let a = this.__stXplanar.astMoverInfo[j].stActualPosition.a;
-                                let b = this.__stXplanar.astMoverInfo[j].stActualPosition.b;
-                                let c = this.__stXplanar.astMoverInfo[j].stActualPosition.c;
-                                // Append
-                                let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
-                                let myMoverText = TcHmi.Controls.get(strMoverTextID);
-                                let myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                                if (myMoverFrame === undefined && myMoverText === undefined && myMoverImage === undefined) {
-                                    // Create
-                                    this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
-                                    this.M_CreateMoverText(strMoverTextID, strMoverTextName, quarterMoverWidth + 2 * offsetWidth, quarterMoverHeight + 2 * offsetHeight, quarterMoverWidth, quarterMoverHeight);
-                                    this.M_CreateMoverImage(strMoverImageID, strMoverImageSrc, 0, 0, width, height);
-                                    // Get
-                                    myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
-                                    myMoverText = TcHmi.Controls.get(strMoverTextID);
-                                    myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                                    // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
-                                    this.__element.append(myMoverFrame.getElement());
-                                    myMoverFrame.__addChild(myMoverText);
-                                    myMoverFrame.__addChild(myMoverImage);
-                                }
-                                // Update
-                                else {
-                                    // Set 
-                                    myMoverFrame.setLeft(x);
-                                    myMoverFrame.setBottom(y);
-                                    myMoverFrame.setWidth(width);
-                                    myMoverFrame.setHeight(height);
-                                    myMoverFrame.setTransform([
-                                        {
-                                            'transformType': 'Rotate',
-                                            'angle': c,
-                                        },
-                                        {
-                                            'transformType': 'Skew',
-                                            'xAngle': a,
-                                            'yAngle': b
-                                        }
-                                    ]);
-                                    myMoverFrame.setBoxShadow([
-                                        {
-                                            'blur': z,
-                                            'blurUnit': "px",
-                                            'color': {
-                                                'color': 'rgba(0,0,0,1)'
-                                            },
-                                            'inset': false,
-                                            'offsetX': a,
-                                            'offsetXUnit': 'px',
-                                            'offsetY': b,
-                                            'offsetYUnit': 'px',
-                                            'spread': 2 * z,
-                                            'spreadUnit': 'px'
-                                        }
-                                    ]);
-                                }
+                            // Movers
+                            this.M_HandleMovers(__stXplanar);
+                            // Tiles 
+                            this.M_HandleTiles(__stXplanar);
+                            // Track 
+                            if (this.__stXplanar.bGetTrack) {
+                                TcHmi.Symbol.writeEx(this.__sXplanarGetTrack, false, function (data) { });
+                                this.M_GetTrack(__stXplanar);
                             }
-                            //-------//
-                            // Tiles //
-                            //-------//
-                            for (let j = 0; j < nTiles; j++) {
-                                // Tile params
-                                let strTileFrameID = this.__id + '_TcHmiTileFrame' + String(j + 1);
-                                // Position
-                                let x = this.__stXplanar.aTilePositions[j].X;
-                                let y = this.__stXplanar.aTilePositions[j].Y;
-                                let width = this.__tileWidth * (1 / this.__scaleFactor);
-                                let height = this.__tileHeight * (1 / this.__scaleFactor);
-                                // Append
-                                let myTileFrame = TcHmi.Controls.get(strTileFrameID);
-                                if (myTileFrame === undefined) {
-                                    // Create
-                                    this.M_CreateTileFrame(strTileFrameID, x, y, width, height);
-                                    // Get
-                                    myTileFrame = TcHmi.Controls.get(strTileFrameID);
-                                    // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
-                                    this.__element.append(myTileFrame.getElement());
-                                }
-                                // Update
-                                else {
-                                    // Set 
-                                    myTileFrame.setLeft(x);
-                                    myTileFrame.setBottom(y);
-                                    myTileFrame.setWidth(width);
-                                    myTileFrame.setHeight(height);
-                                }
+                            if (this.__stXplanar.bClearTrack) {
+                                TcHmi.Symbol.writeEx(this.__sXplanarClearTrack, false, function (data) { });
+                                this.M_ClearTrack(__stXplanar);
                             }
-                            //-------//
-                            // Draw  //
-                            //-------//
                         }
                     }
                 }
-                //----------------------------//
-                // Create html object methods //
-                //----------------------------//
-                M_CreateMoverFrame(__controlID, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.System.TcHmiContainer', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': {
-                            'color': 'rgba(145, 145, 145, 1)'
-                        },
-                        'data-tchmi-border-color': {
-                            'color': 'rgba(0,0,0,1)'
-                        },
-                        'data-tchmi-zindex': 100
-                    }, this // Marks this control as the parent 
-                    );
+                //---------------//
+                // Process mover //
+                //---------------//
+                M_HandleMovers(__stXplanar) {
+                    // Local params
+                    let offsetWidth = this.__deltaOffsetWidth * (1 / this.__scaleFactor);
+                    let offsetHeight = this.__deltaOffsetHeight * (1 / this.__scaleFactor);
+                    // Loop index
+                    let amountMovers = this.__stXplanar.astMoverDimension.length;
+                    for (let j = 0; j < amountMovers; j++) {
+                        // Mover params
+                        let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(j + 1);
+                        let strMoverTextID = this.__id + '_TcHmiMoverText' + String(j + 1);
+                        let strMoverTextName = this.__moverText + String(j + 1);
+                        let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(j + 1);
+                        let strMoverImageSrc = this.__moverImageSrc;
+                        // Dimension
+                        let width = this.__stXplanar.astMoverDimension[j].nWidthX * (1 / this.__scaleFactor);
+                        let height = this.__stXplanar.astMoverDimension[j].nHeightY * (1 / this.__scaleFactor);
+                        // Quarter
+                        let quarterMoverWidth = (width) * (1 / 4);
+                        let quarterMoverHeight = (height) * (1 / 4);
+                        // Position & rotation
+                        let x = this.__stXplanar.astMoverInfo[j].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
+                        let y = this.__stXplanar.astMoverInfo[j].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
+                        let z = this.__stXplanar.astMoverInfo[j].stActualPosition.z * (1 / this.__scaleFactor);
+                        let a = this.__stXplanar.astMoverInfo[j].stActualPosition.a;
+                        let b = this.__stXplanar.astMoverInfo[j].stActualPosition.b;
+                        let c = this.__stXplanar.astMoverInfo[j].stActualPosition.c;
+                        // Append
+                        let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
+                        let myMoverText = TcHmi.Controls.get(strMoverTextID);
+                        let myMoverImage = TcHmi.Controls.get(strMoverImageID);
+                        if (myMoverFrame === undefined && myMoverText === undefined && myMoverImage === undefined) {
+                            // Create
+                            this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
+                            this.M_CreateMoverText(strMoverTextID, strMoverTextName, quarterMoverWidth + 2 * offsetWidth, quarterMoverHeight + 2 * offsetHeight, quarterMoverWidth, quarterMoverHeight);
+                            this.M_CreateMoverImage(strMoverImageID, strMoverImageSrc, 0, 0, width, height);
+                            // Get
+                            myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
+                            myMoverText = TcHmi.Controls.get(strMoverTextID);
+                            myMoverImage = TcHmi.Controls.get(strMoverImageID);
+                            // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
+                            this.__element.append(myMoverFrame.getElement());
+                            myMoverFrame.__addChild(myMoverText);
+                            myMoverFrame.__addChild(myMoverImage);
+                        }
+                        // Update
+                        else {
+                            // Set 
+                            myMoverFrame.setLeft(x);
+                            myMoverFrame.setBottom(y);
+                            myMoverFrame.setWidth(width);
+                            myMoverFrame.setHeight(height);
+                            myMoverFrame.setTransform([
+                                {
+                                    'transformType': 'Rotate',
+                                    'angle': c,
+                                },
+                                {
+                                    'transformType': 'Skew',
+                                    'xAngle': a,
+                                    'yAngle': b
+                                }
+                            ]);
+                            myMoverFrame.setBoxShadow([
+                                {
+                                    'blur': z,
+                                    'blurUnit': "px",
+                                    'color': {
+                                        'color': 'rgba(0,0,0,1)'
+                                    },
+                                    'inset': false,
+                                    'offsetX': a,
+                                    'offsetXUnit': 'px',
+                                    'offsetY': b,
+                                    'offsetYUnit': 'px',
+                                    'spread': 2 * z,
+                                    'spreadUnit': 'px'
+                                }
+                            ]);
+                        }
+                    }
                 }
-                // Create mover text
-                M_CreateMoverText(__controlID, __controlName, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiTextblock', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': {
-                            'color': 'rgba(0, 0, 0, 0)'
-                        },
-                        'data-tchmi-text-color': this.__moverTextColor,
-                        'data-tchmi-text': __controlName,
-                        'data-tchmi-text-vertical-alignment': 'Center',
-                        'data-tchmi-text-horizontal-alignment': 'Center',
-                        'data-tchmi-text-font-size': 20,
-                        'data-tchmi-zindex': 120
-                    });
+                //--------------//
+                // Process tile //
+                //--------------//
+                M_HandleTiles(__stXplanar) {
+                    let amountTiles = __stXplanar.nTileCount;
+                    for (let i = 0; i < amountTiles; i++) {
+                        // Tile params
+                        let strTileFrameID = this.__id + '_TcHmiTileFrame' + String(i + 1);
+                        // Position
+                        let x = this.__stXplanar.aTilePositions[i].X;
+                        let y = this.__stXplanar.aTilePositions[i].Y;
+                        let width = this.__tileWidth * (1 / this.__scaleFactor);
+                        let height = this.__tileHeight * (1 / this.__scaleFactor);
+                        // Append
+                        let myTileFrame = TcHmi.Controls.get(strTileFrameID);
+                        if (myTileFrame === undefined) {
+                            // Create
+                            this.M_CreateTileFrame(strTileFrameID, x, y, width, height);
+                            // Get
+                            myTileFrame = TcHmi.Controls.get(strTileFrameID);
+                            // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
+                            this.__element.append(myTileFrame.getElement());
+                        }
+                        // Update
+                        else {
+                            // Set 
+                            myTileFrame.setLeft(x);
+                            myTileFrame.setBottom(y);
+                            myTileFrame.setWidth(width);
+                            myTileFrame.setHeight(height);
+                        }
+                    }
                 }
-                // Create tile image
-                M_CreateMoverImage(__controlID, __imageSrc, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiImage', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width - this.__borderOffset,
-                        'data-tchmi-height': __height - this.__borderOffset,
-                        'data-tchmi-src': __imageSrc,
-                        'data-tchmi-zindex': 110
-                    });
-                }
-                // Create tile frame
-                M_CreateTileFrame(__controlID, __x, __y, __width, __height) {
-                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiRectangle', __controlID, {
-                        'data-tchmi-left': __x,
-                        'data-tchmi-bottom': __y,
-                        'data-tchmi-width': __width,
-                        'data-tchmi-height': __height,
-                        'data-tchmi-background-color': this.__tileBackgroundColor,
-                        'data-tchmi-border-color': {
-                            'color': 'rgba(0,0,0,1)'
-                        },
-                        'data-tchmi-zindex': 50
-                    }, this // Marks this control as the parent 
-                    );
-                }
-                //-------------//
-                // Build track //
-                //-------------//
-                M_GenerateTrack() {
-                    // Context
-                    let canvas = document.getElementById("canvas_Xplanar");
-                    let ctx = canvas.getContext("2d");
-                    // Add track to buffer if not included
-                    if (this.__arrTrackIndex.indexOf(this.__trackIndex) !== -1) {
+                //-----------//
+                // Get track //
+                //-----------//
+                M_GetTrack(__stXplanar) {
+                    console.log(__stXplanar);
+                    // Xplanar control
+                    let myXplanarControl = TcHmi.Controls.get(this.__id);
+                    // Set canvas after Xplanar control
+                    this.__canvasElement.width = myXplanarControl.getWidth();
+                    this.__canvasElement.height = myXplanarControl.getHeight();
+                    // Update Context
+                    this.__ctx = this.__canvasElement.getContext("2d");
+                    // Add track to index buffer if not included
+                    if (this.__arrTrackIndex.indexOf(this.__trackIndex) === -1) {
                         this.__arrTrackIndex.push(this.__trackIndex);
                     }
-                    // Sort array in ascending order
+                    // Sort index buffer in ascending order
                     this.__arrTrackIndex.sort();
                     // Add offset based upon current screen resolution
                     let deltaHeight = 0;
                     let heightOffset = 0;
                     let displayOffset = 0;
-                    if (window.innerHeight !== this.__defaultWindowHeight) {
+                    if (this.__canvasElement.height !== this.__defaultWindowHeight) {
                         // Compute relative offset for screen
-                        deltaHeight = this.__defaultWindowHeight - window.innerHeight;
-                        canvas.height = this.__defaultCanvasHeight - deltaHeight;
+                        deltaHeight = this.__defaultWindowHeight - this.__canvasElement.height;
+                        this.__canvasElement.height = this.__defaultCanvasHeight - deltaHeight;
                         heightOffset = 2 * deltaHeight;
                         displayOffset = deltaHeight;
                     }
                     else {
                         // Default values
-                        canvas.height = this.__defaultCanvasHeight;
+                        this.__canvasElement.height = this.__defaultCanvasHeight;
                         heightOffset = 0;
                         displayOffset = 0;
                     }
                     // Loop tracks defined
-                    for (let j = 0; j < this.__arrTrackIndex.length; j++) {
-                        let tempTrackIndex = this.__arrTrackIndex[j];
-                        for (let p = 0; p < this.__stXplanar.astTrackInfo[tempTrackIndex].astPoint.length; p++) {
-                            let point = this.__stXplanar.astTrackInfo[tempTrackIndex].astPoint[p];
-                            let pointType = this.__stXplanar.astTrackInfo[tempTrackIndex].astPointType[p];
-                            let markerType = this.__stXplanar.astTrackInfo[tempTrackIndex].astMarkerType[p];
-                            let markerColor = this.__stXplanar.astTrackInfo[tempTrackIndex].astMarkerColor[p];
+                    for (let i = 0; i < this.__arrTrackIndex.length; i++) {
+                        let tempTrackIndex = this.__arrTrackIndex[i];
+                        for (let p = 0; p < __stXplanar.astTrackInfo[tempTrackIndex].astPoint.length; p++) {
+                            let point = __stXplanar.astTrackInfo[tempTrackIndex].astPoint[p];
+                            let pointType = __stXplanar.astTrackInfo[tempTrackIndex].astPointType[p];
+                            let markerType = __stXplanar.astTrackInfo[tempTrackIndex].astMarkerType[p];
+                            let markerColor = __stXplanar.astTrackInfo[tempTrackIndex].astMarkerColor[p];
                             if (!(point.x == 0 && point.y == 0)) {
-                                // Set points
+                                // Set point
                                 this.__arrPoint[p] = point;
                                 this.__arrPointType[p] = pointType;
                                 // Transform from y to y'
                                 this.__arrPoint[p].x = point.x;
-                                this.__arrPoint[p].y = 2 * canvas.height - point.y + heightOffset;
+                                this.__arrPoint[p].y = 2 * this.__canvasElement.height - point.y + heightOffset;
                                 // Set type & color
                                 this.__arrMarkerType[p] = markerType;
                                 this.__arrMarkerColor[p] = markerColor;
                             }
                         }
                         // Draw
-                        this.M_DrawLines(ctx, canvas, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
+                        console.log(this.__ctx);
+                        console.log(this.__canvasElement);
+                        console.log(this.__arrPoint);
+                        this.M_DrawLines(this.__ctx, this.__canvasElement, this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
                     }
+                }
+                // Clear track
+                M_ClearTrack(__stXplanar) {
+                    // Empty track array
+                    this.__arrTrackIndex = [];
+                    // Clear ctx
+                    this.__ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
                 }
                 /*
                  *
@@ -515,20 +491,70 @@ var TcHmi;
                         F_RebuildTracks();
                 });
                 */
-                /*
-                //-------------//
-                // Clear track //
-                //-------------//
-                TcHmi.EventProvider.register(strClearTrack + '.onPressed', function (data) {
-                    // Write to HMI
-                    astPointHMI.length = 0;
-                    astPointTypeHMI.length = 0;
-                    astMarkerTypeHMI.length = 0;
-                    astMarkerColorHMI.length = 0;
-                    aStoredIndex.length = 0;
-                    ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-                });
-                */
+                //-----------------------------//
+                // Control Factory Api methods //
+                //-----------------------------//
+                // Mover frame
+                M_CreateMoverFrame(__controlID, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.System.TcHmiContainer', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': {
+                            'color': 'rgba(145, 145, 145, 1)'
+                        },
+                        'data-tchmi-border-color': {
+                            'color': 'rgba(0,0,0,1)'
+                        },
+                        'data-tchmi-zindex': 100
+                    }, this // Marks this control as the parent 
+                    );
+                }
+                // Mover text
+                M_CreateMoverText(__controlID, __controlName, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiTextblock', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': {
+                            'color': 'rgba(0, 0, 0, 0)'
+                        },
+                        'data-tchmi-text-color': this.__moverTextColor,
+                        'data-tchmi-text': __controlName,
+                        'data-tchmi-text-vertical-alignment': 'Center',
+                        'data-tchmi-text-horizontal-alignment': 'Center',
+                        'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
+                        'data-tchmi-zindex': 120
+                    });
+                }
+                // Mover image
+                M_CreateMoverImage(__controlID, __imageSrc, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiImage', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width - this.__borderOffset * (1 / this.__scaleFactor),
+                        'data-tchmi-height': __height - this.__borderOffset * (1 / this.__scaleFactor),
+                        'data-tchmi-src': __imageSrc,
+                        'data-tchmi-zindex': 110
+                    });
+                }
+                // Tile frame
+                M_CreateTileFrame(__controlID, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiRectangle', __controlID, {
+                        'data-tchmi-left': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-background-color': this.__tileBackgroundColor,
+                        'data-tchmi-border-color': {
+                            'color': 'rgba(0,0,0,1)'
+                        },
+                        'data-tchmi-zindex': 50
+                    }, this // Marks this control as the parent 
+                    );
+                }
                 //-------------//
                 // Draw method //
                 //-------------//
@@ -628,14 +654,6 @@ var TcHmi;
                                     // Draw line
                                     this.M_TrackCircle(__ctx, point1_prime, point2_prime, point3_prime, pointType1, pointType2, pointType3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
                                 }
-                                break;
-                            // Circle_Center
-                            case 4:
-                                // Next index
-                                break;
-                            // Circle_End
-                            case 5:
-                                // Next index
                                 break;
                             // Default
                             default:
