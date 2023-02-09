@@ -469,28 +469,6 @@ var TcHmi;
                     // Clear ctx
                     this.__ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
                 }
-                /*
-                 *
-                 * TO FIX!!!!
-                 *
-                 *
-                //----------------//
-                // Window rescale //
-                //----------------//
-     
-                window.addEventListener("resize", function(data) {
-                    F_RebuildTracks();
-                });
-                */
-                /*
-                //-----------//
-                // Get track //
-                //-----------//
-
-                TcHmi.EventProvider.register(strGetTrack + '.onPressed', function (data) {
-                        F_RebuildTracks();
-                });
-                */
                 //-----------------------------//
                 // Control Factory Api methods //
                 //-----------------------------//
