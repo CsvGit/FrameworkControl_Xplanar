@@ -588,7 +588,6 @@ module TcHmi {
                     this.__arrTrackIndex = [];
                 }
 
-
                 //---------------//
                 // Show Heat Map //
                 //---------------//
@@ -629,7 +628,6 @@ module TcHmi {
                         // West
                         let posWest = { x: deltaTileX + 2 * deltaX, y: deltaTileY + 8 * deltaY };
                         this.M_HeatMapCircle(posWest, colorWest, this.__circleRadius);
-
                     }
                 }
 

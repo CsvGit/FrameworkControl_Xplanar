@@ -26,7 +26,7 @@
     <HmiViewportMaximumScale />
     <HmiViewportUserScaleable>Default</HmiViewportUserScaleable>
     <Name>TcHmiProject_UnitTest</Name>
-    <HmiCommunicationRouterPort>10100</HmiCommunicationRouterPort>
+    <HmiCommunicationRouterPort>10101</HmiCommunicationRouterPort>
     <HmiCommunicationServerAuthPort>13001</HmiCommunicationServerAuthPort>
     <HmiInitial>1.12.758.8</HmiInitial>
     <HmiRecent>1.12.758.8</HmiRecent>
