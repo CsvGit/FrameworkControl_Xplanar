@@ -27,6 +27,22 @@
     "DEFAULTTIMEZONE": "client",
     "DEFAULTUSERGROUP": "__SystemUsers",
     "DEFINITIONS": {
+        "PLC1.ARRAY_0..20_OF-ST_Combobox": {
+            "items": {
+                "$ref": "#/definitions/PLC1.ST_Combobox"
+            },
+            "maxItems": 21,
+            "minItems": 21,
+            "type": "array"
+        },
+        "PLC1.ARRAY_0..20_OF-ST_Track": {
+            "items": {
+                "$ref": "#/definitions/PLC1.ST_Track"
+            },
+            "maxItems": 21,
+            "minItems": 21,
+            "type": "array"
+        },
         "PLC1.ARRAY_1..100_OF-E_MarkerColor": {
             "items": {
                 "$ref": "#/definitions/PLC1.E_MarkerColor"
@@ -220,8 +236,8 @@
                         "qualified_only": "",
                         "strict": "",
                         "to_string": "",
-                        "to_string_function": "__TO_STRING__141",
-                        "to_wstring_function": "__TO_WSTRING__141"
+                        "to_string_function": "__TO_STRING__144",
+                        "to_wstring_function": "__TO_WSTRING__144"
                     },
                     "enum": [
                         0,
@@ -361,6 +377,23 @@
             },
             "type": "object"
         },
+        "PLC1.ST_Combobox": {
+            "properties": {
+                "category": {
+                    "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                },
+                "id": {
+                    "$ref": "tchmi:general#/definitions/REAL"
+                },
+                "text": {
+                    "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                },
+                "value": {
+                    "$ref": "tchmi:general#/definitions/INT"
+                }
+            },
+            "type": "object"
+        },
         "PLC1.ST_MoverDimension": {
             "properties": {
                 "nHeightY": {
@@ -476,13 +509,10 @@
         },
         "PLC1.ST_Xplanar": {
             "properties": {
-                "aTilePositions": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart"
-                },
-                "aTileTempDist": {
+                "astComboboxTrack": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-ST_TemperatureDistribution"
+                            "$ref": "#/definitions/PLC1.ARRAY_0..20_OF-ST_Combobox"
                         },
                         {
                             "comment": "Arrays"
@@ -495,8 +525,14 @@
                 "astMoverInfo": {
                     "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-ST_MoverInfo"
                 },
+                "astTilePositions": {
+                    "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart"
+                },
+                "astTileTempDist": {
+                    "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-ST_TemperatureDistribution"
+                },
                 "astTrackInfo": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..20_OF-ST_Track"
+                    "$ref": "#/definitions/PLC1.ARRAY_0..20_OF-ST_Track"
                 },
                 "bClearView": {
                     "$ref": "tchmi:general#/definitions/BOOL"

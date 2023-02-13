@@ -12,16 +12,20 @@ module TcHmi {
             // ST_Xplanar type in PLC
             export namespace TcHmiXplanar {
                 export interface ST_Xplanar {
+                    // Flags
                     bValid            : boolean;
                     bShowHeatmap      : boolean;
                     bShowTrack        : boolean;
                     bShowAllTracks    : boolean;
                     bClearView        : boolean;
                     bDisableMovers    : boolean;
+                    // Numbers
                     nTileCount        : Number;
                     nMoverCount       : Number;
-                    aTileTempDist     : Array<any>;
-                    aTilePositions    : Array<any>;
+                    // Arrays
+                    astComboboxTrack  : Array<any>;
+                    astTileTempDist   : Array<any>;
+                    astTilePositions  : Array<any>;
                     astMoverDimension : Array<any>;
                     astTrackInfo      : Array<any>;
                     astMoverInfo      : Array<any>;
@@ -68,14 +72,14 @@ module TcHmi {
                 // General params
                 protected __deltaOffsetHeight: number | null = 5;
                 protected __deltaOffsetWidth: number | null = 5;
-                protected __borderOffset: number | null = 8;
                 protected __circleRadius: number | null = 20;
                 protected __XplanarToCanvasOffset: number | null = 0;
                 protected __CanvasToXplanarOffset: number | null = 0;
                 protected __maxScaleFactor: number | null = 4;
+                protected __fontSize: number | null = 16;
+                protected __trackSize: number | null = 8;
 
                 // Track params
-                protected __trackSize: number | null = 8;
                 protected __arrTrackIndex: Array<number> = [];
                 protected __arrPoint: Array<any> = [];
                 protected __arrPointType: Array<any> = [];
@@ -85,11 +89,6 @@ module TcHmi {
                                                             'navy', ' purple', 'fuchsia', 'olive', 'pink',
                                                             'yellow', 'purple', 'black', 'gray', 'cyan',
                                                             'blue', 'green', 'teal', 'maroon', 'orange'];
-
-                // Mover params
-                protected __apm4220Width: number | null = 115;
-                protected __apm4330Width: number | null = 155;
-                protected __apm4550Width: number | null = 235;
 
                 // Tile params
                 protected __tileWidth: number | null = 240;
@@ -456,8 +455,8 @@ module TcHmi {
                     // Find max Y position of tiles
                     let currentMax = 0;
                     for (let i = 0; i < __stXplanar.nTileCount; i++) {
-                        if (currentMax < __stXplanar.aTilePositions[i].Y) {
-                            currentMax = __stXplanar.aTilePositions[i].Y;
+                        if (currentMax < __stXplanar.astTilePositions[i].Y) {
+                            currentMax = __stXplanar.astTilePositions[i].Y;
                         }
                     }
 
@@ -517,7 +516,7 @@ module TcHmi {
                         // Fetch
                         let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                         let myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                        let myMoverText = TcHmi.Controls.get(strMoverTextID); // && myMoverText === undefined) {
+                        let myMoverText = TcHmi.Controls.get(strMoverTextID); 
                         if (myMoverFrame === undefined && myMoverImage === undefined && myMoverText === undefined) { 
                             // Create
                             this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
@@ -593,8 +592,8 @@ module TcHmi {
                         let strTileFrameID = this.__id + '_TcHmiTileFrame' + String(i + 1);
 
                         // Position
-                        let x = __stXplanar.aTilePositions[i].X * (1 / this.__scaleFactor);
-                        let y = __stXplanar.aTilePositions[i].Y * (1 / this.__scaleFactor);
+                        let x = __stXplanar.astTilePositions[i].X * (1 / this.__scaleFactor);
+                        let y = __stXplanar.astTilePositions[i].Y * (1 / this.__scaleFactor);
                         let width = this.__tileWidth * (1 / this.__scaleFactor);
                         let height = this.__tileHeight * (1 / this.__scaleFactor);
 
@@ -656,7 +655,7 @@ module TcHmi {
                         }                   
                         // Draw
                         if (this.__arrPoint.length > 0) {
-                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, this.__CanvasToXplanarOffset);
+                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__CanvasToXplanarOffset);
                             this.__arrPoint.length = 0;
                         }
                     }
@@ -690,7 +689,7 @@ module TcHmi {
                         }
                         // Draw
                         if (this.__arrPoint.length > 0) {
-                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, i, this.__scaleFactor, this.__CanvasToXplanarOffset);
+                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, i, this.__CanvasToXplanarOffset);
                             this.__arrPoint.length = 0;
                         }
                     }
@@ -721,11 +720,11 @@ module TcHmi {
                     // Loop
                     for (let i = 0; i < __stXplanar.nTileCount; i++) {
                         // Temperatures
-                        let tempCenter = __stXplanar.aTileTempDist[i].TemperatureCenter;
-                        let tempNorth = __stXplanar.aTileTempDist[i].TemperatureNorth;
-                        let tempSouth = __stXplanar.aTileTempDist[i].TemperatureSouth;
-                        let tempEast = __stXplanar.aTileTempDist[i].TemperatureEast;
-                        let tempWest = __stXplanar.aTileTempDist[i].TemperatureWest;
+                        let tempCenter = __stXplanar.astTileTempDist[i].TemperatureCenter;
+                        let tempNorth = __stXplanar.astTileTempDist[i].TemperatureNorth;
+                        let tempSouth = __stXplanar.astTileTempDist[i].TemperatureSouth;
+                        let tempEast = __stXplanar.astTileTempDist[i].TemperatureEast;
+                        let tempWest = __stXplanar.astTileTempDist[i].TemperatureWest;
 
                         // Color
                         let colorCenter = this.M_HeatMapColor(tempCenter);
@@ -738,8 +737,8 @@ module TcHmi {
                         let kDelta = 0.0625;
                         let deltaX = kDelta * this.__tileWidth * (1 / this.__scaleFactor);
                         let deltaY = kDelta * this.__tileHeight * (1 / this.__scaleFactor);
-                        let deltaTileX = __stXplanar.aTilePositions[i].X * (1 / this.__scaleFactor);
-                        let deltaTileY = __stXplanar.aTilePositions[i].Y * (1 / this.__scaleFactor);
+                        let deltaTileX = __stXplanar.astTilePositions[i].X * (1 / this.__scaleFactor);
+                        let deltaTileY = __stXplanar.astTilePositions[i].Y * (1 / this.__scaleFactor);
 
                         // Center
                         let posCenter = { x: deltaTileX + 8 * deltaX, y: deltaTileY + 8 * deltaY };
@@ -809,8 +808,7 @@ module TcHmi {
                     ctx.beginPath();
                     ctx.arc(__point.x, __point.y, __radius, 0, 2 * Math.PI);
                     ctx.strokeStyle = __colorTemperature;
-                    let fontSize = 16 * (1 / this.__scaleFactor);
-                    ctx.font = String(fontSize) + "px Arial";
+                    ctx.font = String(this.__fontSize * (1 / this.__scaleFactor)) + "px Arial";
                     ctx.strokeText(String(__tileTemperature) + '°', __point.x - 3 * this.__deltaOffsetWidth * (1 / this.__scaleFactor), __point.y + this.__deltaOffsetHeight * (1 / this.__scaleFactor))
                     ctx.stroke();
 
@@ -824,7 +822,7 @@ module TcHmi {
                 //-------------//
                 // Draw method //
                 //-------------//
-                private M_DrawLines(__arrPoint: Array<any>, __arrPointType: Array<any>, __arrMarkerType: Array<any>, __arrMarkerColor: Array<any>, __trackIndex: number, __scaleFactor: number, __displayOffset: number,) {
+                private M_DrawLines(__arrPoint: Array<any>, __arrPointType: Array<any>, __arrMarkerType: Array<any>, __arrMarkerColor: Array<any>, __trackIndex: number, __displayOffset: number,) {
                     // Context
                     let ctx = this.__canvasElement.getContext("2d");
 
@@ -859,13 +857,13 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / this.__scaleFactor) };
 
                                     // Text field   
-                                    this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
+                                    this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex, __displayOffset)
 
                                     // Draw first point
-                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex]);
                                 }
                                 break;
 
@@ -883,18 +881,18 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined && point2 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / this.__scaleFactor) };
+                                    point2_prime = { x: point2.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / this.__scaleFactor) };
 
                                     // Text field    
-                                    this.M_TrackLineText(ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
+                                    this.M_TrackLineText(ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, __displayOffset)
    
                                     // Draw points
-                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor)
+                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex]);
+                                    this.M_TrackPoint(ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex]);
 
                                     // Draw line
-                                    this.M_TrackLine(ctx, point1_prime, point2_prime, pointType1, pointType2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackLine(ctx, point1_prime, point2_prime, pointType1, pointType2, __trackIndex, this.__arrTrackColor[__trackIndex]);
                                 }
                                 break;
 
@@ -916,22 +914,22 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined && point2 !== undefined && point3 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point3_prime = { x: point3.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point3.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / this.__scaleFactor) };
+                                    point2_prime = { x: point2.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / this.__scaleFactor) };
+                                    point3_prime = { x: point3.x * (1 / this.__scaleFactor), y: (this.__canvasElement.height - point3.y - __displayOffset) * (1 / this.__scaleFactor) };
 
                                     // Text field      
-                                    this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
-                                    this.M_TrackPointText(ctx, point2_prime, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
-                                    this.M_TrackPointText(ctx, point3_prime, markerType3, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
+                                    this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex,__displayOffset);
+                                    this.M_TrackPointText(ctx, point2_prime, markerType2, __trackIndex,__displayOffset);
+                                    this.M_TrackPointText(ctx, point3_prime, markerType3, __trackIndex,__displayOffset);
 
                                     // Draw points
-                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
-                                    this.M_TrackPoint(ctx, point3_prime, markerType3, markerColor3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackPoint(ctx, point1_prime, markerType1, markerColor1, __trackIndex, this.__arrTrackColor[__trackIndex]);
+                                    this.M_TrackPoint(ctx, point2_prime, markerType2, markerColor2, __trackIndex, this.__arrTrackColor[__trackIndex]);
+                                    this.M_TrackPoint(ctx, point3_prime, markerType3, markerColor3, __trackIndex, this.__arrTrackColor[__trackIndex]);
 
                                     // Draw line
-                                    this.M_TrackCircle(ctx, point1_prime, point2_prime, point3_prime, pointType1, pointType2, pointType3, __trackIndex, this.__arrTrackColor[__trackIndex], this.__trackSize, __scaleFactor);
+                                    this.M_TrackCircle(ctx, point1_prime, point2_prime, point3_prime, pointType1, pointType2, pointType3, __trackIndex, this.__arrTrackColor[__trackIndex]);
                                 }
                                 break;
 
@@ -950,13 +948,13 @@ module TcHmi {
                 //----------------//
 
                 // Track point
-                private M_TrackPoint(__ctx: CanvasRenderingContext2D, __point: any, __markerType: string, __markerColor: number, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: number) {
+                private M_TrackPoint(__ctx: CanvasRenderingContext2D, __point: any, __markerType: string, __markerColor: number, __trackIndex: number, __trackColor: string) {
                     // Convert enumrations to string
                     let strMarkerType = __markerType;
                     let strMarkerColor = this.M_TrackPointColor(__markerColor);
 
                     // Default circle radius
-                    let radius = __size * (1 / __scaleFactor);
+                    let radius = this.__trackSize * (1 / this.__scaleFactor);
 
                     // Draw point 
                     __ctx.beginPath();
@@ -1065,23 +1063,22 @@ module TcHmi {
 
 
                 // Track point text
-                private M_TrackPointText(__ctx: CanvasRenderingContext2D, __point:any, __markerType: string, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
+                private M_TrackPointText(__ctx: CanvasRenderingContext2D, __point:any, __markerType: string, __trackIndex: number, __displayOffset: number) {
                     // Font type
                     __ctx.beginPath();
                     __ctx.fillStyle = 'black';
-                    __size = __size * (1 / __scaleFactor);
-                    __ctx.font = String(3 * __size) + 'px serif';
+                    __ctx.font = String(this.__fontSize * (1 / 2) * (1 / this.__scaleFactor)) + 'px serif';
 
                     // Offset scale
-                    let offsetScaleX = 6 * (1 / __scaleFactor);
-                    let offsetScaleY = 54 * (1 / __scaleFactor);
+                    let offsetScaleX = 6 * (1 / this.__scaleFactor);
+                    let offsetScaleY = 54 * (1 / this.__scaleFactor);
 
                     // Offset positions
                     let posX = Math.floor(__point.x);
                     let posY = Math.floor(this.__canvasElement.height - __point.y - __displayOffset);
 
                     // Write text
-                    let text = '(X: ' + String(posX * (__scaleFactor)) + ', Y: ' + String(posY* (__scaleFactor)) + ')';
+                    let text = '(X: ' + String(posX * (this.__scaleFactor)) + ', Y: ' + String(posY* (this.__scaleFactor)) + ')';
                     let offsetX = __point.x + offsetScaleX;
                     let offsetY = __point.y + offsetScaleY;
                     __ctx.fillText(text, offsetX, offsetY);
@@ -1099,7 +1096,7 @@ module TcHmi {
                 //--------------//
 
                 // Track line
-                private M_TrackLine(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __pointType1: any, __pointType2: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor : number) {
+                private M_TrackLine(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __pointType1: any, __pointType2: any, __trackIndex: number, __trackColor: string) {
                     // Convert enumrations to string
                     let strPointType1 = this.M_TrackPointType(__pointType1);
                     let strPointType2 = this.M_TrackPointType(__pointType2);
@@ -1118,7 +1115,7 @@ module TcHmi {
 
                             // Line
                             let hyp = Math.sqrt((__point2.x - __point1.x) * (__point2.x - __point1.x) + (__point2.y - __point1.y) * (__point2.y - __point1.y));
-                            let size = __size * (1 / this.__scaleFactor);
+                            let size = this.__trackSize * (1 / this.__scaleFactor);
                             __ctx.beginPath();     
                             __ctx.moveTo(0, 0);
                             __ctx.lineTo(hyp - size,0);
@@ -1143,7 +1140,7 @@ module TcHmi {
 
 
                 // Track line text
-                private M_TrackLineText(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __markerType1: any, __markerType2: any, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
+                private M_TrackLineText(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __markerType1: any, __markerType2: any, __trackIndex: number, __displayOffset: number) {
                     // Convert enumration to string
                     let strType1 = __markerType1;
                     let strType2 = __markerType2;
@@ -1155,12 +1152,11 @@ module TcHmi {
                     // Font type
                     __ctx.beginPath();
                     __ctx.fillStyle = 'black';
-                    __size = __size * (1 / __scaleFactor);
-                    __ctx.font = String(3 * __size) + 'px serif';
+                    __ctx.font = String(this.__fontSize * (1 / 2) * (1 /this.__scaleFactor)) + 'px serif';
 
                     // Offset scale
-                    let offsetScaleX = 6 * (1 / __scaleFactor);
-                    let offsetScaleY = 54 * (1 / __scaleFactor);
+                    let offsetScaleX = 6 * (1 / this.__scaleFactor);
+                    let offsetScaleY = 54 * (1 / this.__scaleFactor);
 
 
                     // Offset positions
@@ -1206,7 +1202,7 @@ module TcHmi {
                 //----------------//
 
                 // Track circle
-                private M_TrackCircle(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __point3: any, __pointType1: any, __pointType2: any, __pointType3: any, __trackIndex: number, __trackColor: string, __size: number, __scaleFactor: any) {
+                private M_TrackCircle(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __point3: any, __pointType1: any, __pointType2: any, __pointType3: any, __trackIndex: number, __trackColor: string) {
                     // Convert enumrations to string
                     let strPointType1 = this.M_TrackPointType(__pointType1);
                     let strPointType2 = this.M_TrackPointType(__pointType2);
@@ -1345,7 +1341,7 @@ module TcHmi {
                             'data-tchmi-height': __height,
                             'data-tchmi-text': __text,
                             'data-tchmi-text-color': this.__moverTextColor,
-                            'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
+                            'data-tchmi-text-font-size': this.__fontSize * (1 / this.__scaleFactor),
                             'data-tchmi-zindex': 120
                         }
                     );
