@@ -2,23 +2,7 @@
   <div id="ViewDesktopBeckhoffLogo" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-src="Images/Beckhoff_Logo.svg" data-tchmi-left="0" data-tchmi-top="0" data-tchmi-width="200" data-tchmi-height="50">
 
   </div>
-<div id="TcHmiXplanarControl_1" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="1080" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="360" data-tchmi-top-unit="px" data-tchmi-width="1920" data-tchmi-width-unit="px" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=100%/s%" data-tchmi-xplanar-tile-imagesrc="\Images\Beckhoff_Logo.svg" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-background-image-vertical-alignment="Center" data-tchmi-xplanar-mover-imagesrc="Images/mover.png" data-tchmi-xplanar-scalefactor="%ctrl%TcHmiCombobox_ScaleFactor::SelectedValue%/ctrl%" data-tchmi-xplanar-trackindex="%ctrl%TcHmiCombobox_Tracks::SelectedValue%/ctrl%">
-
-
-
-<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-textcolor" type="application/json">
-{
-  "color": "rgba(0, 0, 0, 1)"
-}
-</script>
-
-<script data-tchmi-target-attribute="data-tchmi-xplanar-tile-backgroundcolor" type="application/json">
-{
-  "color": "rgba(255, 255, 255, 1)"
-}
-</script>
-</div>
-<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="330" data-tchmi-height-unit="px" data-tchmi-left="965" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="960" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="24" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="24" data-tchmi-row-numbers-font-size="20">
+<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="330" data-tchmi-height-unit="px" data-tchmi-left="960" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="960" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="24" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="24" data-tchmi-row-numbers-font-size="20">
 <script data-tchmi-target-attribute="data-tchmi-src-column" type="application/json">
 [
   {
@@ -553,5 +537,20 @@
   "color": "rgba(0, 0, 0, 1)"
 }
 </script>
+</div>
+<div id="TcHmiXplanarControl" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="960" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="363" data-tchmi-top-unit="px" data-tchmi-width="1920" data-tchmi-width-unit="px" data-tchmi-xplanar-scalefactor="%ctrl%TcHmiCombobox_ScaleFactor::SelectedValue%/ctrl%" data-tchmi-xplanar-trackindex="%ctrl%TcHmiCombobox_Tracks::SelectedValue%/ctrl%" data-tchmi-xplanar-mover-imagesrc="Images/mover.png" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar%/s%">
+<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-textcolor" type="application/json">
+{
+  "color": "rgba(0,0,0,1)"
+}
+</script>
+<script data-tchmi-target-attribute="data-tchmi-xplanar-tile-backgroundcolor" type="application/json">
+{
+  "color": "rgba(255,255,255,1)"
+}
+</script>
+
+</div>
+<div id="TcHmiTextblock" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="57" data-tchmi-height-unit="px" data-tchmi-left="495" data-tchmi-left-unit="px" data-tchmi-text="Textblock" data-tchmi-top="290" data-tchmi-top-unit="px" data-tchmi-width="227" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="24">
 </div>
 </div>

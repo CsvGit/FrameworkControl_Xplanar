@@ -339,6 +339,8 @@ var TcHmi;
                         let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
                         let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
                         let strMoverImageSrc = this.__moverImageSrc;
+                        let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
+                        let strMoverText = '  ' + String(i + 1) + '.';
                         // Dimension
                         let width = this.__stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
                         let height = this.__stXplanar.astMoverDimension[i].nHeightY * (1 / this.__scaleFactor);
@@ -349,25 +351,32 @@ var TcHmi;
                         let a = this.__stXplanar.astMoverInfo[i].stActualPosition.a;
                         let b = this.__stXplanar.astMoverInfo[i].stActualPosition.b;
                         let c = this.__stXplanar.astMoverInfo[i].stActualPosition.c;
-                        // Append
+                        // Fetch
                         let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                         let myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                        if (myMoverFrame === undefined && myMoverImage === undefined) {
+                        let myMoverText = TcHmi.Controls.get(strMoverTextID); // && myMoverText === undefined) {
+                        if (myMoverFrame === undefined && myMoverImage === undefined && myMoverText === undefined) {
                             // Create
                             this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
                             this.M_CreateMoverImage(strMoverImageID, strMoverImageSrc, 0, 0, width, height);
-                            // Get
+                            this.M_CreateMoverText(strMoverTextID, strMoverText, 0, 0, width, height);
+                            // Fetch
                             myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                             myMoverImage = TcHmi.Controls.get(strMoverImageID);
+                            myMoverText = TcHmi.Controls.get(strMoverTextID);
                             // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
                             this.__element.append(myMoverFrame.getElement());
                             myMoverFrame.__addChild(myMoverImage);
+                            myMoverFrame.__addChild(myMoverText);
                         }
                         // Update
                         else {
                             // Set image
                             myMoverImage.setWidth(width);
                             myMoverImage.setHeight(height);
+                            // Set text
+                            myMoverText.setWidth(width);
+                            myMoverText.setHeight(height);
                             // Set frame
                             myMoverFrame.setLeft(x);
                             myMoverFrame.setBottom(y + this.__XplanarToCanvasOffset);
@@ -1019,6 +1028,19 @@ var TcHmi;
                         'data-tchmi-height': __height,
                         'data-tchmi-src': __imageSrc,
                         'data-tchmi-zindex': 110
+                    });
+                }
+                // Mover image
+                M_CreateMoverText(__controlID, __text, __x, __y, __width, __height) {
+                    TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiTextblock', __controlID, {
+                        'data-tchmi-top': __x,
+                        'data-tchmi-bottom': __y,
+                        'data-tchmi-width': __width,
+                        'data-tchmi-height': __height,
+                        'data-tchmi-text': __text,
+                        'data-tchmi-text-color': this.__moverTextColor,
+                        'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
+                        'data-tchmi-zindex': 120
                     });
                 }
                 // Tile frame
