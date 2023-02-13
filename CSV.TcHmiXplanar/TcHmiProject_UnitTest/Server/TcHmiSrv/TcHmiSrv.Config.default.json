@@ -220,8 +220,8 @@
                         "qualified_only": "",
                         "strict": "",
                         "to_string": "",
-                        "to_string_function": "__TO_STRING__142",
-                        "to_wstring_function": "__TO_WSTRING__142"
+                        "to_string_function": "__TO_STRING__141",
+                        "to_wstring_function": "__TO_WSTRING__141"
                     },
                     "enum": [
                         0,
@@ -480,10 +480,14 @@
                     "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart"
                 },
                 "aTileTempDist": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-ST_TemperatureDistribution"
-                },
-                "asMoverType": {
-                    "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-STRING-80"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-ST_TemperatureDistribution"
+                        },
+                        {
+                            "comment": "Arrays"
+                        }
+                    ]
                 },
                 "astMoverDimension": {
                     "$ref": "#/definitions/PLC1.ARRAY_1..30_OF-ST_MoverDimension"
@@ -494,29 +498,43 @@
                 "astTrackInfo": {
                     "$ref": "#/definitions/PLC1.ARRAY_1..20_OF-ST_Track"
                 },
-                "bClearTrack": {
+                "bClearView": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
                 "bDisableMovers": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
-                "bGetTrack": {
+                "bShowAllTracks": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
                 "bShowHeatmap": {
                     "$ref": "tchmi:general#/definitions/BOOL"
                 },
-                "bValid": {
+                "bShowTrack": {
                     "$ref": "tchmi:general#/definitions/BOOL"
+                },
+                "bValid": {
+                    "allOf": [
+                        {
+                            "$ref": "tchmi:general#/definitions/BOOL"
+                        },
+                        {
+                            "comment": "Flags"
+                        }
+                    ]
                 },
                 "nMoverCount": {
                     "$ref": "tchmi:general#/definitions/UDINT"
                 },
                 "nTileCount": {
-                    "$ref": "tchmi:general#/definitions/UDINT"
-                },
-                "nTrackIndex": {
-                    "$ref": "tchmi:general#/definitions/UINT"
+                    "allOf": [
+                        {
+                            "$ref": "tchmi:general#/definitions/UDINT"
+                        },
+                        {
+                            "comment": "Numbers"
+                        }
+                    ]
                 }
             },
             "type": "object"
@@ -539,8 +557,8 @@
     "DISCOVERY": 2,
     "ENABLE_SERVER_UPDATE": true,
     "ENDPOINTS": [
-        "http://127.0.0.1:13001",
-        "http://127.0.0.1:3001"
+        "http://127.0.0.1:13002",
+        "http://127.0.0.1:3002"
     ],
     "ETAGENABLED": true,
     "EXTENSIONS": {

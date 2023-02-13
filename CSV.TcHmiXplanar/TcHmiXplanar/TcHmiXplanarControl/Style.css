@@ -9,13 +9,13 @@
     height: 100%;
 }
 
-/* Add border to frame  */
+/* Add border to frame 
 .TcHmi_Controls_System_TcHmiContainer {
     border       : solid;
     border-width : 4px;
     border-radius: 8px;
 }
-
+ */
 
 
 /* Add border to textblock for debugging

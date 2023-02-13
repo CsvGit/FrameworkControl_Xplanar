@@ -14,17 +14,15 @@ module TcHmi {
                 export interface ST_Xplanar {
                     bValid            : boolean;
                     bShowHeatmap      : boolean;
-                    bHideHeatmap      : boolean;
-                    bGetTrack         : boolean;
-                    bClearTrack       : boolean;
+                    bShowTrack        : boolean;
+                    bShowAllTracks    : boolean;
+                    bClearView        : boolean;
                     bDisableMovers    : boolean;
                     nTileCount        : Number;
                     nMoverCount       : Number;
-                    nTrackIndex       : Number;
                     aTileTempDist     : Array<any>;
                     aTilePositions    : Array<any>;
                     astMoverDimension : Array<any>;
-                    asMoverType       : Array<any>;
                     astTrackInfo      : Array<any>;
                     astMoverInfo      : Array<any>;
                 }
@@ -54,57 +52,64 @@ module TcHmi {
                     super(element, pcElement, attrs);
 
                 }
+
                 //------------//
                 // Attributes //
                 //------------//
 
-                // HTML template
-                protected __elementTemplateRoot! : JQuery;
-                protected __canvasHtml           : JQuery;
-                protected __canvasElement        : HTMLCanvasElement;
-         
+                // HTML 
+                protected __elementTemplateRoot!: JQuery;
+                protected __canvasHtml: JQuery;
+                protected __canvasElement: HTMLCanvasElement;
+
                 // General params
-                protected __deltaOffsetHeight    : number | null = 5;
-                protected __deltaOffsetWidth     : number | null = 5;
-                protected __borderOffset         : number | null = 8;
-                protected __circleRadius         : number | null = 20;
+                protected __deltaOffsetHeight: number | null = 5;
+                protected __deltaOffsetWidth: number | null = 5;
+                protected __borderOffset: number | null = 8;
+                protected __circleRadius: number | null = 20;
+                protected __XplanarToCanvasOffset: number | null = 0;
+                protected __CanvasToXplanarOffset: number | null = 0;
+                protected __maxScaleFactor: number | null = 4;
 
                 // Track params
-                protected __defaultWindowHeight  : number | null = 1080;
-                protected __defaultCanvasHeight  : number | null = 1080;
-                protected __trackSize            : number | null = 8;
-                protected __arrTrackIndex        : Array<number> = [];
-                protected __arrPoint             : Array<any> = [];
-                protected __arrPointType         : Array<any> = [];
-                protected __arrMarkerType        : Array<any> = [];
-                protected __arrMarkerColor       : Array<any> = [];
-                protected __arrTrackColor        : Array<string> = ['blue', 'green', 'teal', 'maroon', 'orange',
-                                                                    'navy', ' purple', 'fuchsia', 'olive', 'pink',
-                                                                    'yellow', 'purple', 'black', 'gray', 'cyan',
-                                                                    'blue', 'green', 'teal', 'maroon', 'orange'];
+                protected __trackSize: number | null = 8;
+                protected __arrTrackIndex: Array<number> = [];
+                protected __arrPoint: Array<any> = [];
+                protected __arrPointType: Array<any> = [];
+                protected __arrMarkerType: Array<any> = [];
+                protected __arrMarkerColor: Array<any> = [];
+                protected __arrTrackColor: Array<string> = ['blue', 'green', 'teal', 'maroon', 'orange',
+                    'navy', ' purple', 'fuchsia', 'olive', 'pink',
+                    'yellow', 'purple', 'black', 'gray', 'cyan',
+                    'blue', 'green', 'teal', 'maroon', 'orange'];
+
                 // Mover params
-                protected __apm4220Width         : number | null = 115;
-                protected __apm4330Width         : number | null = 155;
-                protected __apm4550Width         : number | null = 235;
+                protected __apm4220Width: number | null = 115;
+                protected __apm4330Width: number | null = 155;
+                protected __apm4550Width: number | null = 235;
 
                 // Tile params
-                protected __tileWidth            : number | null = 240;
-                protected __tileHeight           : number | null = 240;
+                protected __tileWidth: number | null = 240;
+                protected __tileHeight: number | null = 240;
 
                 // Xplanar attributes
-                protected __stXplanar            : TcHmiXplanar.ST_Xplanar | null;
-                protected __scaleFactor          : number | null;
-                protected __trackIndex           : number | null; 
-                protected __moverImageSrc        : string;
-                protected __moverTextColor       : Color;
-                protected __tileBackgroundColor  : Color;
+                protected __stXplanar: TcHmiXplanar.ST_Xplanar | null;
+                protected __scaleFactor: number | null;
+                protected __trackIndex: number | null;
+                protected __moverImageSrc: string;
+                protected __moverTextColor: Color;
+                protected __tileBackgroundColor: Color;
 
                 // PLC
-                protected __sXplanarGetTrack     : string = "%s%PLC1.GVL_HMI.stXplanar::bGetTrack%/s%";
-                protected __sXplanarClearTrack   : string = "%s%PLC1.GVL_HMI.stXplanar::bClearTrack%/s%";
-                protected __sXplanarShowHeatmap  : string = "%s%PLC1.GVL_HMI.stXplanar::bShowHeatMap%/s%";
+                protected __sXplanarShowTrack     : string = "%s%PLC1.GVL_HMI.stXplanar::bShowTrack%/s%";
+                protected __sXplanarShowAllTracks : string = "%s%PLC1.GVL_HMI.stXplanar::bShowAllTracks%/s%";
+                protected __sXplanarClearView     : string = "%s%PLC1.GVL_HMI.stXplanar::bClearTrack%/s%";
+                protected __sXplanarShowHeatmap   : string = "%s%PLC1.GVL_HMI.stXplanar::bShowHeatMap%/s%";
 
-				/**
+
+
+
+                /**
                   * If raised, the control object exists in control cache and constructor of each inheritation level was called.
                   * Call attribute processor functions here to initialize default values!
                   */
@@ -122,13 +127,20 @@ module TcHmi {
                     // Call __previnit of base class
                     super.__previnit();
                 }
+
+
+
+
                 /** 
                  * Is called during control initialize phase after attribute setter have been called based on it's default or initial html dom values. 
                  * @returns {void}
                  */
                 public __init() {
-                    super.__init();   
+                    super.__init();
                 }
+
+
+
 
                 /**
                 * Is called by the system after the control instance gets part of the current DOM.
@@ -137,6 +149,9 @@ module TcHmi {
                 public __attach() {
                     super.__attach();
                 }
+
+
+
 
                 /**
                 * Is called by the system after the control instance is no longer part of the current DOM.
@@ -151,6 +166,9 @@ module TcHmi {
                      */
                 }
 
+
+
+
                 /**
                 * Destroy the current control instance. 
                 * Will be called automatically if system destroys control!
@@ -160,7 +178,10 @@ module TcHmi {
                         return;
                     }
                     super.destroy();
-                } 
+                }
+
+
+
 
                 /**
                 * Gets the value of __moverImageSrc
@@ -169,6 +190,9 @@ module TcHmi {
                 public M_GetMoverImageSrc(): string {
                     return this.__moverImageSrc;
                 }
+
+
+
 
                 /**
                 * Sets the value of __moverImageSrc
@@ -190,6 +214,9 @@ module TcHmi {
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverImageSrc"]);
                 }
 
+
+
+
                 /**
                 * Gets the value of __scaleFactor
                 * @returns The current value of ScaleFactor
@@ -197,6 +224,9 @@ module TcHmi {
                 public M_GetScaleFactor(): Number {
                     return this.__scaleFactor;
                 }
+
+
+
 
                 /**
                 * Sets the value of __scaleFactor
@@ -206,8 +236,8 @@ module TcHmi {
                     // Convert the value
                     let convertedValue = TcHmi.ValueConverter.toNumber(valueNew);
 
-                    // When converted value is null, get internal default
-                    if (convertedValue === null) {
+                    // When converted value is null, 0 or above 4 get internal default
+                    if (convertedValue === null || convertedValue < 1 || convertedValue > this.__maxScaleFactor) {
                         convertedValue = this.getAttributeDefaultValueInternal("ScaleFactor");
                     }
 
@@ -219,6 +249,9 @@ module TcHmi {
 
                 }
 
+
+
+
                 /**
                 * Gets the value of __trackIndex
                 * @returns The current value of TrackIndex
@@ -226,6 +259,9 @@ module TcHmi {
                 public M_GetTrackIndex(): Number {
                     return this.__trackIndex;
                 }
+
+
+
 
                 /**
                 * Sets the value of __trackIndex
@@ -247,6 +283,9 @@ module TcHmi {
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetTrackIndex"]);
                 }
 
+
+
+
                 /**
                 * Gets the value of __moverTextColor
                 * @returns The current value of MoverTextColor
@@ -254,6 +293,9 @@ module TcHmi {
                 public M_GetMoverTextColor(): Color {
                     return this.__moverTextColor;
                 }
+
+
+
 
                 /**
                 * Sets the value of __moverTextColor
@@ -275,6 +317,9 @@ module TcHmi {
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverTextColor"]);
                 }
 
+
+
+
                 /**
                 * Gets the value of __tileBackgroundColor
                 * @returns The current value of TileBackgroundColor
@@ -282,6 +327,9 @@ module TcHmi {
                 public M_GetTileBackgroundColor(): Color {
                     return this.__moverTextColor;
                 }
+
+
+
 
                 /**
                 * Sets the value of __tileBackgroundColor
@@ -303,6 +351,9 @@ module TcHmi {
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetTileBackgroundColor"]);
                 }
 
+
+
+
                 /**
                 * Gets the value of __stXplanar
                 * @returns The current value of stXplanar
@@ -310,6 +361,9 @@ module TcHmi {
                 public M_GetStXplanar(): TcHmiXplanar.ST_Xplanar {
                     return this.__stXplanar;
                 }
+
+
+
 
                 /**
                 * Sets the value of __stXplanar
@@ -336,70 +390,120 @@ module TcHmi {
                     // Inform the system that the function has a changed result.
                     TcHmi.EventProvider.raise(this.__id + '.onPropertyChanged', { propertyName: 'stXplanar' });
 
-                    // Call process function to process the new value
+                    // Call handle function to process the new value
                     this.M_HandleStXplanar(this.__stXplanar);
                 }
+
+
+
 
                 //----------------------//
                 // Handle the stXplanar //
                 //----------------------// 
-                protected M_HandleStXplanar(__stXplanar: TcHmiXplanar.ST_Xplanar | null ) {
-                    // Run when defined structure and valid tile layout
+                protected M_HandleStXplanar(__stXplanar: TcHmiXplanar.ST_Xplanar | null) {
+                    // Run when defined structure and Xplanar data from NC
                     if (this.__stXplanar) {
                         if (this.__stXplanar.bValid) {
+                            // Offset
+                            this.M_HandleOffset(__stXplanar);
+
                             // Movers
                             this.M_HandleMovers(__stXplanar);
 
                             // Tiles 
                             this.M_HandleTiles(__stXplanar);
 
-                            // Track 
-                            if (this.__stXplanar.bGetTrack) {
-                                TcHmi.Symbol.writeEx(this.__sXplanarGetTrack, false, function (data) { });
-                                this.M_GetTrack(__stXplanar);
+                            // Show Track 
+                            if (this.__stXplanar.bShowTrack) {
+                                this.M_ShowTrack(__stXplanar);
                             }
-                            if (this.__stXplanar.bClearTrack) {
-                                TcHmi.Symbol.writeEx(this.__sXplanarClearTrack, false, function (data) { });
-                                this.M_ClearTrack();
-                            }        
+
+                            // Show all tracks 
+                            if (this.__stXplanar.bShowAllTracks) {
+                                this.M_ShowAllTracks(__stXplanar);
+                            }
 
                             // Heat map
                             if (this.__stXplanar.bShowHeatmap) {
-                                TcHmi.Symbol.writeEx(this.__sXplanarShowHeatmap, false, function (data) { })
                                 this.M_ShowHeatMap(__stXplanar);
                             }
-                        }               
+
+                            // Clear view
+                            if (this.__stXplanar.bClearView) {
+                                this.M_ClearView();
+                            }
+                        }
                     }
                 }
+
+
+
+
+                //---------------//
+                // Handle offset //
+                //---------------//
+                private M_HandleOffset(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
+                    // Xplanar control
+                    let myXplanarControl = TcHmi.Controls.get(this.__id);
+
+                    // Canvas
+                    this.__canvasElement.height = myXplanarControl.getHeight();
+                    this.__canvasElement.width = myXplanarControl.getWidth();
+
+                    // Find max Y position of tiles
+                    let currentMax = 0;
+                    for (let i = 0; i < __stXplanar.nTileCount; i++) {
+                        if (currentMax < __stXplanar.aTilePositions[i].Y) {
+                            currentMax = __stXplanar.aTilePositions[i].Y;
+                        }
+                    }
+
+                    // Compute Xplanar to Canvas offset
+                    this.__XplanarToCanvasOffset = this.__canvasElement.height - currentMax - this.__tileHeight;
+                    if (this.__scaleFactor > 1) {
+                        this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset + this.__scaleFactor * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 2) {
+                        this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (1 / 3) * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 3) {
+                        this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (2 / 3) * this.__tileHeight;
+                    }
+
+                    // Compute Canvas to Xplanar offset
+                    this.__CanvasToXplanarOffset = this.__XplanarToCanvasOffset
+                    if (this.__scaleFactor > 1) {
+                        this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset - this.__scaleFactor * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 2) {
+                        this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (1 / 3) * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 3) {
+                        this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (2 / 3) * this.__tileHeight;
+                    }
+                }
+
+
+
 
                 //---------------//
                 // Handle movers //
                 //---------------//
                 private M_HandleMovers(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
-                    // Local params
-                    let offsetWidth = this.__deltaOffsetWidth * (1 / this.__scaleFactor);
-                    let offsetHeight = this.__deltaOffsetHeight * (1 / this.__scaleFactor);
-
                     // Loop index
                     for (let i = 0; i < __stXplanar.nMoverCount; i++) {
                         // Mover params
                         let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
-                        let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
                         let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
-                        let strMoverTextName = String(i + 1) +'.';
                         let strMoverImageSrc = this.__moverImageSrc;
 
                         // Dimension
                         let width = this.__stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
                         let height = this.__stXplanar.astMoverDimension[i].nHeightY * (1 / this.__scaleFactor);
 
-                        // Quarter
-                        let quarterMoverWidth = (width) * (1 / 4);
-                        let quarterMoverHeight = (height) * (1 / 4);
-
                         // Position & rotation
-                        let x = this.__stXplanar.astMoverInfo[i].stActualPosition.x * (1 / this.__scaleFactor) - 2 * quarterMoverWidth;
-                        let y = this.__stXplanar.astMoverInfo[i].stActualPosition.y * (1 / this.__scaleFactor) - 2 * quarterMoverHeight;
+                        let x = this.__stXplanar.astMoverInfo[i].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
+                        let y = this.__stXplanar.astMoverInfo[i].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
                         let z = this.__stXplanar.astMoverInfo[i].stActualPosition.z * (1 / this.__scaleFactor);
                         let a = this.__stXplanar.astMoverInfo[i].stActualPosition.a;
                         let b = this.__stXplanar.astMoverInfo[i].stActualPosition.b;
@@ -407,59 +511,29 @@ module TcHmi {
 
                         // Append
                         let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
-                        let myMoverText = TcHmi.Controls.get(strMoverTextID);
                         let myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                        if (myMoverFrame === undefined && myMoverText === undefined && myMoverImage === undefined) {
+                        if (myMoverFrame === undefined &&  myMoverImage === undefined) {
                             // Create
                             this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
-                            this.M_CreateMoverText(strMoverTextID, strMoverTextName, quarterMoverWidth, quarterMoverHeight, quarterMoverWidth, quarterMoverHeight);
                             this.M_CreateMoverImage(strMoverImageID, strMoverImageSrc, 0, 0, width, height);
 
                             // Get
                             myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
-                            myMoverText = TcHmi.Controls.get(strMoverTextID);
                             myMoverImage = TcHmi.Controls.get(strMoverImageID);
 
                             // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
                             this.__element.append(myMoverFrame.getElement());
-                            myMoverFrame.__addChild(myMoverText);
                             myMoverFrame.__addChild(myMoverImage);
                         }
                         // Update
                         else {
                             // Set image
-                            myMoverImage.setWidth(width - this.__borderOffset * (1 / this.__scaleFactor));
-                            myMoverImage.setHeight(height - this.__borderOffset * (1 / this.__scaleFactor));
-
-                            // Set text
-                            switch (width) {
-                                case this.__apm4220Width:
-                                    myMoverText.setLeft(quarterMoverWidth + 2 * offsetWidth);
-                                    myMoverText.setBottom(quarterMoverHeight + 2 * offsetHeight);
-                                    myMoverText.setWidth(quarterMoverWidth + 2 * offsetWidth);
-                                    myMoverText.setHeight(quarterMoverHeight + 2 * offsetHeight);
-                                    break;
-
-                                case this.__apm4330Width:
-                                    myMoverText.setLeft(quarterMoverWidth + 2 * offsetWidth);
-                                    myMoverText.setBottom(quarterMoverHeight + 2 * offsetHeight);
-                                    myMoverText.setWidth(quarterMoverWidth + 2 * offsetWidth);
-                                    myMoverText.setHeight(quarterMoverHeight + 2 * offsetHeight);
-                                    break;
-
-                                case this.__apm4550Width:
-                                    myMoverText.setLeft(quarterMoverWidth + 4 * offsetWidth);
-                                    myMoverText.setBottom(quarterMoverHeight + 4 * offsetHeight);
-                                    myMoverText.setWidth(quarterMoverWidth + 4 * offsetWidth);
-                                    myMoverText.setHeight(quarterMoverHeight + 4 * offsetHeight);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            myMoverImage.setWidth(width);
+                            myMoverImage.setHeight(height);
 
                             // Set frame
-                            myMoverFrame.setLeft(x);
-                            myMoverFrame.setBottom(y);
+                            myMoverFrame.setLeft(x)
+                            myMoverFrame.setBottom(y + this.__XplanarToCanvasOffset);
                             myMoverFrame.setWidth(width);
                             myMoverFrame.setHeight(height);
                             myMoverFrame.setTransform([
@@ -475,7 +549,7 @@ module TcHmi {
                             ]);
                             myMoverFrame.setBoxShadow([
                                 {
-                                    'blur': z,
+                                    'blur': 4*z,
                                     'blurUnit': "px",
                                     'color': {
                                         'color': 'rgba(0,0,0,1)'
@@ -493,17 +567,21 @@ module TcHmi {
                     }
                 }
 
+
+
+
                 //--------------//
                 // Handle tiles //
                 //--------------//
                 private M_HandleTiles(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
+                    // Setup tiles
                     for (let i = 0; i < __stXplanar.nTileCount; i++) {
                         // Tile params
                         let strTileFrameID = this.__id + '_TcHmiTileFrame' + String(i + 1);
 
                         // Position
-                        let x = this.__stXplanar.aTilePositions[i].X;
-                        let y = this.__stXplanar.aTilePositions[i].Y;
+                        let x = __stXplanar.aTilePositions[i].X * (1 / this.__scaleFactor);
+                        let y = __stXplanar.aTilePositions[i].Y * (1 / this.__scaleFactor);
                         let width = this.__tileWidth * (1 / this.__scaleFactor);
                         let height = this.__tileHeight * (1 / this.__scaleFactor);
 
@@ -523,24 +601,20 @@ module TcHmi {
                         else {
                             // Set 
                             myTileFrame.setLeft(x);
-                            myTileFrame.setBottom(y);
+                            myTileFrame.setBottom(y + this.__XplanarToCanvasOffset);
                             myTileFrame.setWidth(width);
                             myTileFrame.setHeight(height);
                         }
                     }
                 }
 
-                //-----------//
-                // Get track //
-                //-----------//
-                private M_GetTrack(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
-                    // Xplanar control
-                    let myXplanarControl = TcHmi.Controls.get(this.__id);
 
-                    // Set canvas after Xplanar control
-                    this.__canvasElement.width = myXplanarControl.getWidth();
-                    this.__canvasElement.height = myXplanarControl.getHeight();
-                 
+
+
+                //------------//
+                // Show track //
+                //------------//
+                private M_ShowTrack(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void { 
                     // Add track to index buffer if not included
                     if (this.__arrTrackIndex.indexOf(this.__trackIndex) === -1) {
                         this.__arrTrackIndex.push(this.__trackIndex);
@@ -548,9 +622,6 @@ module TcHmi {
 
                     // Sort index buffer in ascending order
                     this.__arrTrackIndex.sort();
-
-                    // Add offset based upon current screen resolution
-                    let displayOffset = (this.__tileHeight / 2) * (1 / this.__scaleFactor);
 
                     // Loop tracks defined
                     for (let i = 0; i < this.__arrTrackIndex.length; i++) {
@@ -570,23 +641,65 @@ module TcHmi {
                                 this.__arrMarkerColor[p] = markerColor;
                             }
                         }                   
-       
                         // Draw
-                        this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, displayOffset);
+                        if (this.__arrPoint.length > 0) {
+                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, tempTrackIndex, this.__scaleFactor, this.__CanvasToXplanarOffset);
+                            this.__arrPoint.length = 0;
+                        }
                     }
                 }
 
-                //-----------//
-                // Clear track //
-                //-----------//
-                private M_ClearTrack(): void {
+
+
+
+                //-----------------//
+                // Show all tracks //
+                //-----------------//
+                private M_ShowAllTracks(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
+                    let trackCount = __stXplanar.astTrackInfo.length;
+
+                    // Loop tracks defined
+                    for (let i = 0; i < trackCount; i++) {
+                        for (let p = 0; p < __stXplanar.astTrackInfo[i].astPoint.length; p++) {
+                            let point = __stXplanar.astTrackInfo[i].astPoint[p];
+                            let pointType = __stXplanar.astTrackInfo[i].astPointType[p];
+                            let markerType = __stXplanar.astTrackInfo[i].astMarkerType[p];
+                            let markerColor = __stXplanar.astTrackInfo[i].astMarkerColor[p];
+                            if (!(point.x == 0 && point.y == 0)) {
+                                // Set point
+                                this.__arrPoint[p] = point;
+                                this.__arrPointType[p] = pointType;
+                                this.__arrPoint[p].x = point.x;
+                                this.__arrPoint[p].y = point.y;
+                                this.__arrMarkerType[p] = markerType;
+                                this.__arrMarkerColor[p] = markerColor;
+                            }
+                        }
+                        // Draw
+                        if (this.__arrPoint.length > 0) {
+                            this.M_DrawLines(this.__arrPoint, this.__arrPointType, this.__arrMarkerType, this.__arrMarkerColor, i, this.__scaleFactor, this.__CanvasToXplanarOffset);
+                            this.__arrPoint.length = 0;
+                        }
+                    }
+                }
+
+
+
+
+                //------------//
+                // Clear view //
+                //------------//
+                private M_ClearView(): void {
                     // Context
                     let ctx = this.__canvasElement.getContext("2d");
                     ctx.clearRect(0, 0, this.__canvasElement.width, this.__canvasElement.height);
 
-                    // Empty track array
+                    // Empty track buffer
                     this.__arrTrackIndex = [];
                 }
+
+
+
 
                 //---------------//
                 // Show Heat Map //
@@ -594,13 +707,19 @@ module TcHmi {
                 private M_ShowHeatMap(__stXplanar: TcHmiXplanar.ST_Xplanar | null): void {
                     // Loop
                     for (let i = 0; i < __stXplanar.nTileCount; i++) {
+                        // Temperatures
+                        let tempCenter = __stXplanar.aTileTempDist[i].TemperatureCenter;
+                        let tempNorth = __stXplanar.aTileTempDist[i].TemperatureNorth;
+                        let tempSouth = __stXplanar.aTileTempDist[i].TemperatureSouth;
+                        let tempEast = __stXplanar.aTileTempDist[i].TemperatureEast;
+                        let tempWest = __stXplanar.aTileTempDist[i].TemperatureWest;
 
                         // Color
-                        let colorCenter = this.M_HeatMapColor(__stXplanar.aTileTempDist[i].TemperatureCenter);
-                        let colorNorth = this.M_HeatMapColor(__stXplanar.aTileTempDist[i].TemperatureNorth);
-                        let colorSouth = this.M_HeatMapColor(__stXplanar.aTileTempDist[i].TemperatureSouth);
-                        let colorEast = this.M_HeatMapColor(__stXplanar.aTileTempDist[i].TemperatureEast);
-                        let colorWest = this.M_HeatMapColor(__stXplanar.aTileTempDist[i].TemperatureWest);
+                        let colorCenter = this.M_HeatMapColor(tempCenter);
+                        let colorNorth = this.M_HeatMapColor(tempNorth);
+                        let colorSouth = this.M_HeatMapColor(tempSouth);
+                        let colorEast = this.M_HeatMapColor(tempEast);
+                        let colorWest = this.M_HeatMapColor(tempWest);
 
                         // Offsets
                         let kDelta = 0.0625;
@@ -611,25 +730,28 @@ module TcHmi {
 
                         // Center
                         let posCenter = { x: deltaTileX + 8 * deltaX, y: deltaTileY + 8 * deltaY };
-                        this.M_HeatMapCircle(posCenter, colorCenter, this.__circleRadius);
+                        this.M_HeatMapCircle(posCenter, colorCenter, tempCenter, this.__circleRadius * (1 / this.__scaleFactor));
 
                         // North
                         let posNorth = { x: deltaTileX + 8 * deltaX, y: deltaTileY + 2*deltaY }
-                        this.M_HeatMapCircle(posNorth, colorNorth, this.__circleRadius);
+                        this.M_HeatMapCircle(posNorth, colorNorth, tempNorth, this.__circleRadius * (1 / this.__scaleFactor));
 
                         // South
                         let posSouth = { x: deltaTileX + 8 * deltaX, y: deltaTileY + 14 * deltaY }
-                        this.M_HeatMapCircle(posSouth, colorSouth, this.__circleRadius);
+                        this.M_HeatMapCircle(posSouth, colorSouth, tempSouth, this.__circleRadius * (1 / this.__scaleFactor));
 
                         // East 
                         let posEast = { x: deltaTileX + 14 * deltaX, y: deltaTileY + 8 * deltaY };
-                        this.M_HeatMapCircle(posEast, colorEast, this.__circleRadius);
+                        this.M_HeatMapCircle(posEast, colorEast, tempEast, this.__circleRadius * (1 / this.__scaleFactor));
 
                         // West
                         let posWest = { x: deltaTileX + 2 * deltaX, y: deltaTileY + 8 * deltaY };
-                        this.M_HeatMapCircle(posWest, colorWest, this.__circleRadius);
+                        this.M_HeatMapCircle(posWest, colorWest, tempWest, this.__circleRadius * (1 / this.__scaleFactor));
                     }
                 }
+
+
+
 
                 //----------------//
                 // Heat Map color //
@@ -660,23 +782,31 @@ module TcHmi {
                     }
                 }
 
+
+
+
                 //-----------------//
                 // Heat Map circle //
                 //-----------------//
-                private M_HeatMapCircle(__point: any, __colorTemperature: string, __radius: number): void {
+                private M_HeatMapCircle(__point: any, __colorTemperature: string, __tileTemperature : string, __radius: number): void {
                     // Context
                     let ctx = this.__canvasElement.getContext("2d");
 
                     // Draw
                     ctx.beginPath();
                     ctx.arc(__point.x, __point.y, __radius, 0, 2 * Math.PI);
-                    ctx.fillStyle = __colorTemperature;
-                    ctx.fill();
+                    ctx.strokeStyle = __colorTemperature;
+                    let fontSize = 16 * (1 / this.__scaleFactor);
+                    ctx.font = String(fontSize) + "px Arial";
+                    ctx.strokeText(String(__tileTemperature) + '°', __point.x - 3 * this.__deltaOffsetWidth * (1 / this.__scaleFactor), __point.y + this.__deltaOffsetHeight * (1 / this.__scaleFactor))
                     ctx.stroke();
 
                     // Restore
                     ctx.restore();
                 }
+
+
+
 
                 //-------------//
                 // Draw method //
@@ -716,7 +846,7 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point1.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
 
                                     // Text field   
                                     this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
@@ -740,8 +870,8 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined && point2 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point1.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point2.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / __scaleFactor) };
 
                                     // Text field    
                                     this.M_TrackLineText(ctx, point1_prime, point2_prime, markerType1, markerType2, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset)
@@ -773,9 +903,9 @@ module TcHmi {
                                 // Avoid undefined points
                                 if (point1 !== undefined && point2 !== undefined && point3 !== undefined) {
                                     // Rescale points
-                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point1.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point2.y - __displayOffset) * (1 / __scaleFactor) };
-                                    point3_prime = { x: point3.x * (1 / __scaleFactor), y: (this.__defaultWindowHeight - point3.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point1_prime = { x: point1.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point1.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point2_prime = { x: point2.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point2.y - __displayOffset) * (1 / __scaleFactor) };
+                                    point3_prime = { x: point3.x * (1 / __scaleFactor), y: (this.__canvasElement.height - point3.y - __displayOffset) * (1 / __scaleFactor) };
 
                                     // Text field      
                                     this.M_TrackPointText(ctx, point1_prime, markerType1, __trackIndex, this.__trackSize, __scaleFactor, __displayOffset);
@@ -798,6 +928,9 @@ module TcHmi {
                         }
                     }
                 }
+
+
+
 
                 //----------------//
                 // Point methods  //
@@ -837,6 +970,9 @@ module TcHmi {
                     __ctx.restore();
                 }
 
+
+
+
                 // Track point type
                 private M_TrackPointType(__pointIndex: number) : string {
                     let strResult = '';
@@ -866,6 +1002,9 @@ module TcHmi {
                     }
                     return strResult;
                 }
+
+
+
 
                 // Track point color
                 private M_TrackPointColor(__markerIndex: number) : string {
@@ -909,6 +1048,9 @@ module TcHmi {
                     return strResult;
                 }
 
+
+
+
                 // Track point text
                 private M_TrackPointText(__ctx: CanvasRenderingContext2D, __point:any, __markerType: string, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
                     // Font type
@@ -921,8 +1063,12 @@ module TcHmi {
                     let offsetScaleX = 6 * (1 / __scaleFactor);
                     let offsetScaleY = 54 * (1 / __scaleFactor);
 
-                    // Write texts
-                    let text = '(X: ' + String(Math.floor(__point.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point - __displayOffset) * (__scaleFactor)) + ')';
+                    // Offset positions
+                    let posX = Math.floor(__point.x);
+                    let posY = Math.floor(this.__canvasElement.height - __point.y - __displayOffset);
+
+                    // Write text
+                    let text = '(X: ' + String(posX * (__scaleFactor)) + ', Y: ' + String(posY* (__scaleFactor)) + ')';
                     let offsetX = __point.x + offsetScaleX;
                     let offsetY = __point.y + offsetScaleY;
                     __ctx.fillText(text, offsetX, offsetY);
@@ -931,6 +1077,9 @@ module TcHmi {
                     // Restore
                     __ctx.restore();
                 }
+
+
+
 
                 //--------------//
                 // Line methods //
@@ -956,18 +1105,19 @@ module TcHmi {
 
                             // Line
                             let hyp = Math.sqrt((__point2.x - __point1.x) * (__point2.x - __point1.x) + (__point2.y - __point1.y) * (__point2.y - __point1.y));
-                            __ctx.beginPath();
+                            let size = __size * (1 / this.__scaleFactor);
+                            __ctx.beginPath();     
                             __ctx.moveTo(0, 0);
-                            __ctx.lineTo(hyp - __size, 0);
+                            __ctx.lineTo(hyp - size,0);
                             __ctx.strokeStyle = __trackColor;
                             __ctx.stroke();
 
                             // Triangle
                             __ctx.fillStyle = __trackColor;
                             __ctx.beginPath();
-                            __ctx.lineTo(hyp - __size, __size);
+                            __ctx.lineTo(hyp - size, size);
                             __ctx.lineTo(hyp, 0);
-                            __ctx.lineTo(hyp - __size, -__size);
+                            __ctx.lineTo(hyp - size, -size);
                             __ctx.fill();
 
                             // Restore
@@ -975,6 +1125,9 @@ module TcHmi {
                         }
                     }
                 }
+
+
+
 
                 // Track line text
                 private M_TrackLineText(__ctx: CanvasRenderingContext2D, __point1: any, __point2: any, __markerType1: any, __markerType2: any, __trackIndex: number, __size: number, __scaleFactor: number, __displayOffset: number) {
@@ -996,9 +1149,28 @@ module TcHmi {
                     let offsetScaleX = 6 * (1 / __scaleFactor);
                     let offsetScaleY = 54 * (1 / __scaleFactor);
 
+
+                    // Offset positions
+                    let posX1 = __point1.x * this.__scaleFactor;
+                    let posX2 = __point2.x * this.__scaleFactor;
+                    let posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor;
+                    let posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor;
+                    if (this.__scaleFactor > 1) {
+                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
+                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 2) {
+                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
+                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
+                    }
+                    if (this.__scaleFactor > 3) {
+                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
+                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
+                    }
+
                     // Write texts
-                    let text1 = '(X: ' + String(Math.floor(__point1.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point1.y - __displayOffset) * (__scaleFactor)) + ')';
-                    let text2 = '(X: ' + String(Math.floor(__point2.x) * (__scaleFactor)) + ', Y: ' + String(Math.floor(this.__defaultWindowHeight - __point2.y - __displayOffset) * (__scaleFactor)) + ')';
+                    let text1 = '(X: ' + String(posX1) + ', Y: ' + String(posY1) + ')';
+                    let text2 = '(X: ' + String(posX2) + ', Y: ' + String(posY2) + ')';
                     let offsetX1 = __point1.x + offsetScaleX;
                     let offsetY1 = __point1.y + offsetScaleY;
                     let offsetX2 = __point2.x + offsetScaleX;
@@ -1012,6 +1184,9 @@ module TcHmi {
                     // Restore
                     __ctx.restore();
                 }
+
+
+
 
                 //----------------//
                 // Circle methods //
@@ -1102,6 +1277,7 @@ module TcHmi {
 
 
 
+
                 //-----------------------------//
                 // Control Factory Api methods //
                 //-----------------------------//
@@ -1117,7 +1293,7 @@ module TcHmi {
                             'data-tchmi-width': __width,
                             'data-tchmi-height': __height,
                             'data-tchmi-background-color': {
-                                'color': 'rgba(145, 145, 145, 1)'
+                                'color': 'rgba(0, 0, 0, 0)'
                             },
                             'data-tchmi-border-color': {
                                 'color': 'rgba(0,0,0,1)'
@@ -1125,29 +1301,6 @@ module TcHmi {
                             'data-tchmi-zindex': 100
                         },
                         this // Marks this control as the parent 
-                    );
-                }
-
-                // Mover text
-                private M_CreateMoverText(__controlID: string, __controlName: string, __x: number | null, __y: number | null, __width: number | null, __height: number | null) {
-                    TcHmi.ControlFactory.createEx(
-                        'TcHmi.Controls.Beckhoff.TcHmiTextblock',
-                        __controlID,
-                        {
-                            'data-tchmi-left': __x,
-                            'data-tchmi-bottom': __y,
-                            'data-tchmi-width': __width,
-                            'data-tchmi-height': __height,
-                            'data-tchmi-background-color': {
-                                'color': 'rgba(0, 0, 0, 0)'
-                            },
-                            'data-tchmi-text-color': this.__moverTextColor,
-                            'data-tchmi-text': __controlName,
-                            'data-tchmi-text-vertical-alignment': 'Center',
-                            'data-tchmi-text-horizontal-alignment': 'Center',
-                            'data-tchmi-text-font-size': 24 * (1 / this.__scaleFactor),
-                            'data-tchmi-zindex': 120
-                        }
                     );
                 }
 
@@ -1159,8 +1312,8 @@ module TcHmi {
                         {
                             'data-tchmi-left': __x,
                             'data-tchmi-bottom': __y,
-                            'data-tchmi-width': __width - this.__borderOffset * (1 / this.__scaleFactor),
-                            'data-tchmi-height': __height - this.__borderOffset * (1 / this.__scaleFactor),
+                            'data-tchmi-width': __width,
+                            'data-tchmi-height': __height,
                             'data-tchmi-src': __imageSrc,
                             'data-tchmi-zindex': 110
                         }
@@ -1186,12 +1339,6 @@ module TcHmi {
                         this // Marks this control as the parent 
                     );
                 }
-
-
-
-
-
-
             }
         }
     }

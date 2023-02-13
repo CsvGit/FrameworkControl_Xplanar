@@ -143,8 +143,8 @@
       "readOnly": false,
       "bindable": true,
       "heritable": false,
-      "defaultValue": 1,
-      "defaultValueInternal": 1
+      "defaultValue": 0,
+      "defaultValueInternal": 0
     },
     {
       "name": "data-tchmi-xplanar-mover-textcolor",

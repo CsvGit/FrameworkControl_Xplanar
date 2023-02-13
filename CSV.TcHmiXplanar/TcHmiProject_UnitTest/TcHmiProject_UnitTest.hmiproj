@@ -12,7 +12,7 @@
     <HmiTitle>Please enter your Title...</HmiTitle>
     <HmiVerboseLevel>2</HmiVerboseLevel>
     <HmiVersion>1.0.0.0</HmiVersion>
-    <HmiCommunicationServerPort>3001</HmiCommunicationServerPort>
+    <HmiCommunicationServerPort>3002</HmiCommunicationServerPort>
     <HmiLogTcHmiServerMessages>false</HmiLogTcHmiServerMessages>
     <HmiLogDesignerModeComMessages>false</HmiLogDesignerModeComMessages>
     <HmiServerVersion>Latest</HmiServerVersion>
@@ -27,7 +27,7 @@
     <HmiViewportUserScaleable>Default</HmiViewportUserScaleable>
     <Name>TcHmiProject_UnitTest</Name>
     <HmiCommunicationRouterPort>10101</HmiCommunicationRouterPort>
-    <HmiCommunicationServerAuthPort>13001</HmiCommunicationServerAuthPort>
+    <HmiCommunicationServerAuthPort>13002</HmiCommunicationServerAuthPort>
     <HmiInitial>1.12.758.8</HmiInitial>
     <HmiRecent>1.12.758.8</HmiRecent>
     <HmiServerNodeAdvancedView>False</HmiServerNodeAdvancedView>
@@ -130,6 +130,9 @@
       <Visible>false</Visible>
     </Content>
     <Content Include="Images\Background.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\mover.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\metal.png">
