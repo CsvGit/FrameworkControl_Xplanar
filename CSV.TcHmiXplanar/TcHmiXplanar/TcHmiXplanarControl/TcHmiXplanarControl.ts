@@ -76,7 +76,7 @@ module TcHmi {
                 protected __XplanarToCanvasOffset: number | null = 0;
                 protected __CanvasToXplanarOffset: number | null = 0;
                 protected __maxScaleFactor: number | null = 4;
-                protected __fontSize: number | null = 16;
+                protected __fontSize: number | null = 20;
                 protected __trackSize: number | null = 8;
 
                 // Track params
@@ -101,6 +101,7 @@ module TcHmi {
                 protected __moverImageSrc: string;
                 protected __moverTextColor: Color;
                 protected __tileBackgroundColor: Color;
+                protected __isVerticalLayout: boolean;
 
                 // PLC
                 protected __sXplanarShowTrack     : string = "%s%PLC1.GVL_HMI.stXplanar::bShowTrack%/s%";
@@ -289,6 +290,40 @@ module TcHmi {
 
 
                 /**
+                * Gets the value of __isVerticalLayout
+                * @returns The current value of __isVerticalLayout
+                */
+                public M_GetIsVerticalLayout(): boolean {
+                    return this.__isVerticalLayout;
+                }
+
+
+
+
+                /**
+                * Sets the value of __trackIndex
+                * @param valueNew The new value for TrackIndex
+                */
+                public M_SetIsVerticalLayout(valueNew: boolean | null) {
+                    // Convert the value
+                    let convertedValue = TcHmi.ValueConverter.toBoolean(valueNew);
+
+                    // When converted value is null, get internal default
+                    if (convertedValue === null) {
+                        convertedValue = this.getAttributeDefaultValueInternal("isVerticalLayout");
+                    }
+
+                    // Save new value
+                    this.__isVerticalLayout = convertedValue;
+
+                    // Inform the system that the function has a a changed result
+                    TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetIsVerticalLayout"]);
+                }
+
+
+
+
+                /**
                 * Gets the value of __moverTextColor
                 * @returns The current value of MoverTextColor
                 */
@@ -463,25 +498,55 @@ module TcHmi {
                     // Compute Xplanar to Canvas offset
                     this.__XplanarToCanvasOffset = this.__canvasElement.height - currentMax - this.__tileHeight;
                     if (this.__scaleFactor > 1) {
+                        // Horizontal
                         this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset + this.__scaleFactor * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset + this.__scaleFactor * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 2) {
+                        // Horizontal
                         this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (1 / 3) * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (1 / 3) * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 3) {
+                        // Horizontal
                         this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (2 / 3) * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__XplanarToCanvasOffset = this.__XplanarToCanvasOffset - (2 / 3) * this.__tileHeight;
+                        }
                     }
 
                     // Compute Canvas to Xplanar offset
-                    this.__CanvasToXplanarOffset = this.__XplanarToCanvasOffset
+                    this.__CanvasToXplanarOffset = this.__XplanarToCanvasOffset;
                     if (this.__scaleFactor > 1) {
+                        // Horizontal
                         this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset - this.__scaleFactor * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset - this.__scaleFactor * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 2) {
+                        // Horizontal
                         this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (1 / 3) * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (1 / 3) * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 3) {
+                        // Horizontal
                         this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (2 / 3) * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            this.__CanvasToXplanarOffset = this.__CanvasToXplanarOffset + (2 / 3) * this.__tileHeight;
+                        }
                     }
                 }
 
@@ -500,38 +565,46 @@ module TcHmi {
                         let strMoverImageSrc = this.__moverImageSrc;
                         let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
                         let strMoverText = '  ' + String(i + 1) + '.';
+                        let strMoverRectangleID = this.__id + '_TcHmiMoverRectangle' + String(i + 1);
 
                         // Dimension
-                        let width = this.__stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
-                        let height = this.__stXplanar.astMoverDimension[i].nHeightY * (1 / this.__scaleFactor);
+                        let width = __stXplanar.astMoverDimension[i].nWidthX * (1 / this.__scaleFactor);
+                        let height = __stXplanar.astMoverDimension[i].nHeightY * (1 / this.__scaleFactor);
 
                         // Position & rotation
-                        let x = this.__stXplanar.astMoverInfo[i].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
-                        let y = this.__stXplanar.astMoverInfo[i].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
-                        let z = this.__stXplanar.astMoverInfo[i].stActualPosition.z * (1 / this.__scaleFactor);
-                        let a = this.__stXplanar.astMoverInfo[i].stActualPosition.a;
-                        let b = this.__stXplanar.astMoverInfo[i].stActualPosition.b;
-                        let c = this.__stXplanar.astMoverInfo[i].stActualPosition.c;
+                        let x = __stXplanar.astMoverInfo[i].stActualPosition.x * (1 / this.__scaleFactor) - (width / 2);
+                        let y = __stXplanar.astMoverInfo[i].stActualPosition.y * (1 / this.__scaleFactor) - (height / 2);
+                        let z = __stXplanar.astMoverInfo[i].stActualPosition.z * (1 / this.__scaleFactor);
+                        let a = __stXplanar.astMoverInfo[i].stActualPosition.a;
+                        let b = __stXplanar.astMoverInfo[i].stActualPosition.b;
+                        let c = __stXplanar.astMoverInfo[i].stActualPosition.c;
+
+                        // Alarm
+                        let moverAlarm = __stXplanar.astMoverInfo[i].bError;
 
                         // Fetch
                         let myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                         let myMoverImage = TcHmi.Controls.get(strMoverImageID);
-                        let myMoverText = TcHmi.Controls.get(strMoverTextID); 
-                        if (myMoverFrame === undefined && myMoverImage === undefined && myMoverText === undefined) { 
+                        let myMoverText = TcHmi.Controls.get(strMoverTextID);
+                        let myMoverRectangle = TcHmi.Controls.get(strMoverRectangleID);
+                        if (myMoverFrame === undefined && myMoverImage === undefined && myMoverText === undefined && myMoverRectangle === undefined) { 
                             // Create
                             this.M_CreateMoverFrame(strMoverFrameID, x, y, width, height);
                             this.M_CreateMoverImage(strMoverImageID, strMoverImageSrc, 0, 0, width, height);
                             this.M_CreateMoverText(strMoverTextID, strMoverText, 0, 0, width, height);
+                            this.M_CreateMoverRectangle(strMoverRectangleID, 0, 0, width, height);
 
                             // Fetch
                             myMoverFrame = TcHmi.Controls.get(strMoverFrameID);
                             myMoverImage = TcHmi.Controls.get(strMoverImageID);
                             myMoverText = TcHmi.Controls.get(strMoverTextID);
+                            myMoverRectangle = TcHmi.Controls.get(strMoverRectangleID);
 
                             // Append to our DOM. This will be detected by the framework and its .__attach function will be called automatically. 
                             this.__element.append(myMoverFrame.getElement());
                             myMoverFrame.__addChild(myMoverImage);
                             myMoverFrame.__addChild(myMoverText);
+                            myMoverFrame.__addChild(myMoverRectangle);
                         }
                         // Update
                         else {
@@ -542,6 +615,16 @@ module TcHmi {
                             // Set text
                             myMoverText.setWidth(width);
                             myMoverText.setHeight(height);
+
+                            // Set rectangel
+                            myMoverRectangle.setWidth(width);
+                            myMoverRectangle.setHeight(height);
+                            if (moverAlarm) {
+                                myMoverRectangle.setVisibility('Visible');
+                            }
+                            else {
+                                myMoverRectangle.setVisibility('Collapsed');
+                            }
 
                             // Set frame
                             myMoverFrame.setLeft(x)
@@ -1067,15 +1150,39 @@ module TcHmi {
                     // Font type
                     __ctx.beginPath();
                     __ctx.fillStyle = 'black';
-                    __ctx.font = String(this.__fontSize * (1 / 2) * (1 / this.__scaleFactor)) + 'px serif';
+                    __ctx.font = String(this.__fontSize * (1 / this.__scaleFactor)) + 'px serif';
 
                     // Offset scale
                     let offsetScaleX = 6 * (1 / this.__scaleFactor);
                     let offsetScaleY = 54 * (1 / this.__scaleFactor);
 
                     // Offset positions
-                    let posX = Math.floor(__point.x);
-                    let posY = Math.floor(this.__canvasElement.height - __point.y - __displayOffset);
+                    let posX = __point.x * this.__scaleFactor;
+                    let posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor;
+                    if (this.__scaleFactor > 1) {
+                        // Horizontal
+                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY = posY - 4 * this.__tileHeight
+                        }
+                    }
+                    if (this.__scaleFactor > 2) {
+                        // Horizontal
+                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY = posY - 8 * this.__tileHeight
+                        }
+                    }
+                    if (this.__scaleFactor > 3) {
+                        // Horizontal
+                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY = posY - 12 * this.__tileHeight
+                        }
+                    }
 
                     // Write text
                     let text = '(X: ' + String(posX * (this.__scaleFactor)) + ', Y: ' + String(posY* (this.__scaleFactor)) + ')';
@@ -1118,7 +1225,7 @@ module TcHmi {
                             let size = this.__trackSize * (1 / this.__scaleFactor);
                             __ctx.beginPath();     
                             __ctx.moveTo(0, 0);
-                            __ctx.lineTo(hyp - size,0);
+                            __ctx.lineTo(hyp - size, 0);
                             __ctx.strokeStyle = __trackColor;
                             __ctx.stroke();
 
@@ -1152,7 +1259,7 @@ module TcHmi {
                     // Font type
                     __ctx.beginPath();
                     __ctx.fillStyle = 'black';
-                    __ctx.font = String(this.__fontSize * (1 / 2) * (1 /this.__scaleFactor)) + 'px serif';
+                    __ctx.font = String(this.__fontSize * (1 /this.__scaleFactor)) + 'px serif';
 
                     // Offset scale
                     let offsetScaleX = 6 * (1 / this.__scaleFactor);
@@ -1165,16 +1272,34 @@ module TcHmi {
                     let posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor;
                     let posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor;
                     if (this.__scaleFactor > 1) {
+                        // Horizontal
                         posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
                         posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 4 * this.__tileHeight
+                            posY2 = posY2 - 4 * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 2) {
+                        // Horizontal
                         posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
                         posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 8 * this.__tileHeight;
+                            posY2 = posY2 - 8 * this.__tileHeight;
+                        }
                     }
                     if (this.__scaleFactor > 3) {
+                        // Vertical
                         posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
                         posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 12 * this.__tileHeight;
+                            posY2 = posY2 - 12 * this.__tileHeight;
+                        }
                     }
 
                     // Write texts
@@ -1304,9 +1429,6 @@ module TcHmi {
                             'data-tchmi-background-color': {
                                 'color': 'rgba(0, 0, 0, 0)'
                             },
-                            'data-tchmi-border-color': {
-                                'color': 'rgba(0,0,0,1)'
-                            },
                             'data-tchmi-zindex': 100
                         },
                         this // Marks this control as the parent 
@@ -1329,6 +1451,24 @@ module TcHmi {
                     );
                 }
 
+                // Mover rectangle
+                private M_CreateMoverRectangle(__controlID: string, __x: number | null, __y: number | null, __width: number | null, __height: number | null) {
+                    TcHmi.ControlFactory.createEx(
+                        'TcHmi.Controls.Beckhoff.TcHmiRectangle',
+                        __controlID,
+                        {
+                            'data-tchmi-top': __x,
+                            'data-tchmi-bottom': __y,
+                            'data-tchmi-width': __width,
+                            'data-tchmi-height': __height,
+                            'data-tchmi-zindex': 120,
+                            'data-tchmi-background-color': {
+                                'color': 'rgba(177, 18, 38, 1)'
+                            }
+                        }
+                    );
+                }
+
                 // Mover image
                 private M_CreateMoverText(__controlID: string, __text: string, __x: number | null, __y: number | null, __width: number | null, __height: number | null) {
                     TcHmi.ControlFactory.createEx(
@@ -1342,7 +1482,7 @@ module TcHmi {
                             'data-tchmi-text': __text,
                             'data-tchmi-text-color': this.__moverTextColor,
                             'data-tchmi-text-font-size': this.__fontSize * (1 / this.__scaleFactor),
-                            'data-tchmi-zindex': 120
+                            'data-tchmi-zindex': 130
                         }
                     );
                 }

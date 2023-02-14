@@ -147,6 +147,23 @@
       "defaultValueInternal": 0
     },
     {
+      "name": "data-tchmi-xplanar-isVerticalLayout",
+      "displayName": "IsVerticalLayout",
+      "propertyName": "IsVerticalLayout",
+      "propertySetterName": "M_SetIsVerticalLayout",
+      "propertyGetterName": "M_GetIsVerticalLayout",
+      "visible": true,
+      "type": "tchmi:general#/definitions/Boolean",
+      "category": "Xplanar Params",
+      "description": "Xplanar vertical layout.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": false,
+      "defaultValueInternal": false
+    },
+    {
       "name": "data-tchmi-xplanar-mover-textcolor",
       "displayName": "MoverTextColor",
       "propertyName": "MoverTextColor",
