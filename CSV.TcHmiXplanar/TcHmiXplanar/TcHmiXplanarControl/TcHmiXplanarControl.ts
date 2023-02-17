@@ -1176,18 +1176,18 @@ module TcHmi {
                     }
                     if (this.__scaleFactor > 2) {
                         // Horizontal
-                        posY = posY - 8 * this.__tileHeight;
+                        posY = posY - 4 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
-                            posY = posY - 8 * this.__tileHeight;
+                            posY = posY - 4 * this.__tileHeight
                         }
                     }
                     if (this.__scaleFactor > 3) {
                         // Horizontal
-                        posY = posY - 12 * this.__tileHeight;
+                        posY = posY - 4 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
-                            posY = posY - 12 * this.__tileHeight;
+                            posY = posY - 4 * this.__tileHeight
                         }
                     }
 
@@ -1247,22 +1247,22 @@ module TcHmi {
                     }
                     if (this.__scaleFactor > 2) {
                         // Horizontal
-                        posY1 = posY1 - 8 * this.__tileHeight;
-                        posY2 = posY2 - 8 * this.__tileHeight;
+                        posY1 = posY1 - 4 * this.__tileHeight
+                        posY2 = posY2 - 4 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
-                            posY1 = posY1 - 8 * this.__tileHeight;
-                            posY2 = posY2 - 8 * this.__tileHeight;
+                            posY1 = posY1 - 4 * this.__tileHeight
+                            posY2 = posY2 - 4 * this.__tileHeight;
                         }
                     }
                     if (this.__scaleFactor > 3) {
-                        // Vertical
-                        posY1 = posY1 - 12 * this.__tileHeight;
-                        posY2 = posY2 - 12 * this.__tileHeight;
+                        // Horizontal
+                        posY1 = posY1 - 4 * this.__tileHeight
+                        posY2 = posY2 - 4 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
-                            posY1 = posY1 - 12 * this.__tileHeight;
-                            posY2 = posY2 - 12 * this.__tileHeight;
+                            posY1 = posY1 - 4 * this.__tileHeight
+                            posY2 = posY2 - 4 * this.__tileHeight;
                         }
                     }
 

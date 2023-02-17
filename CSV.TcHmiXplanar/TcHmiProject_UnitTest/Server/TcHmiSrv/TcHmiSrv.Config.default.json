@@ -88,6 +88,15 @@
             "startOffset": 1,
             "type": "array"
         },
+        "PLC1.ARRAY_1..100_OF-Tc3_XPlanarStandard.E_PointType": {
+            "items": {
+                "$ref": "#/definitions/PLC1.Tc3_XPlanarStandard.E_PointType"
+            },
+            "maxItems": 100,
+            "minItems": 100,
+            "startOffset": 1,
+            "type": "array"
+        },
         "PLC1.ARRAY_1..100_OF-Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart": {
             "items": {
                 "$ref": "#/definitions/PLC1.Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart"
@@ -236,8 +245,8 @@
                         "qualified_only": "",
                         "strict": "",
                         "to_string": "",
-                        "to_string_function": "__TO_STRING__144",
-                        "to_wstring_function": "__TO_WSTRING__144"
+                        "to_string_function": "__TO_STRING__143",
+                        "to_wstring_function": "__TO_WSTRING__143"
                     },
                     "enum": [
                         0,
@@ -497,7 +506,7 @@
                 "astPointType": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-E_PointType"
+                            "$ref": "#/definitions/PLC1.ARRAY_1..100_OF-Tc3_XPlanarStandard.E_PointType"
                         },
                         {
                             "comment": "Single_Point, Line_Start etc..."
@@ -574,6 +583,58 @@
                 }
             },
             "type": "object"
+        },
+        "PLC1.Tc3_XPlanarStandard.E_PointType": {
+            "allOf": [
+                {
+                    "attributes": {
+                        "qualified_only": "",
+                        "strict": ""
+                    },
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "options": [
+                        {
+                            "label": "none",
+                            "value": 0
+                        },
+                        {
+                            "label": "Point",
+                            "value": 1
+                        },
+                        {
+                            "label": "Line_Start",
+                            "value": 2
+                        },
+                        {
+                            "label": "Line_End",
+                            "value": 3
+                        },
+                        {
+                            "label": "Circle_Start",
+                            "value": 4
+                        },
+                        {
+                            "label": "Circle_Center",
+                            "value": 5
+                        },
+                        {
+                            "label": "Circle_End",
+                            "value": 6
+                        }
+                    ]
+                },
+                {
+                    "$ref": "tchmi:general#/definitions/INT16"
+                }
+            ]
         },
         "PLC1.Tc3_XPlanarUtility.ST_TcIoTilePositionOnPart": {
             "properties": {

@@ -63,8 +63,15 @@
   "userFunctions": [],
   "symbols": {
     "internal": {
-      "bTest": {
-        "type": "tchmi:general#/definitions/BOOL",
+      "nSelectedTrack": {
+        "value": 0.0,
+        "type": "tchmi:general#/definitions/Number",
+        "persist": false,
+        "readonly": false
+      },
+      "nSelectedScale": {
+        "value": 2.0,
+        "type": "tchmi:general#/definitions/Number",
         "persist": false,
         "readonly": false
       }
