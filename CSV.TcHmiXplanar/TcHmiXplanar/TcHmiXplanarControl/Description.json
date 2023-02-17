@@ -224,6 +224,10 @@
       "displayPriority": 10
     },
     {
+      "name": "IsVerticalLayout",
+      "displayPriority": 10
+    },
+    {
       "name": "MoverTextColor",
       "displayPriority": 10
     },

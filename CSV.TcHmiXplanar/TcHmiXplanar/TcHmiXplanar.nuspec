@@ -18,7 +18,7 @@
       <group targetFramework="native1.12-tchmi">
         <dependency id="Beckhoff.TwinCAT.HMI.Framework" version="12.758.8" />
         <dependency id="Beckhoff.TwinCAT.HMI.Controls" version="12.758.8" />
-        <dependency id="Microsoft.TypeScript.MSBuild" version="4.6.4" />
+        <dependency id="Microsoft.TypeScript.MSBuild" version="4.8.4" />
       </group>
     </dependencies>
   </metadata>

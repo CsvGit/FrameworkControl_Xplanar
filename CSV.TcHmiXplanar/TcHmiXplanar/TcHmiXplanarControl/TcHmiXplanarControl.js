@@ -691,10 +691,11 @@ var TcHmi;
                     let point3_prime = null;
                     // Loop
                     for (let p = 0; p < __arrPoint.length; p++) {
+                        console.log(__arrPointType[p]);
                         // Case
                         switch (__arrPointType[p]) {
-                            // Single_Point
-                            case 0:
+                            // Point
+                            case 1:
                                 point1 = __arrPoint[p];
                                 pointType1 = __arrPointType[p];
                                 markerType1 = __arrMarkerType[p];
@@ -710,7 +711,7 @@ var TcHmi;
                                 }
                                 break;
                             // Line_Start
-                            case 1:
+                            case 2:
                                 point1 = __arrPoint[p];
                                 point2 = __arrPoint[p + 1];
                                 pointType1 = __arrPointType[p];
@@ -734,7 +735,7 @@ var TcHmi;
                                 }
                                 break;
                             // Circle_Start
-                            case 3:
+                            case 4:
                                 point1 = __arrPoint[p];
                                 point2 = __arrPoint[p + 1];
                                 point3 = __arrPoint[p + 2];
@@ -810,25 +811,28 @@ var TcHmi;
                     // Cases
                     switch (__pointIndex) {
                         case 0:
-                            strResult = 'Single_Point';
+                            strResult = 'none';
                             break;
                         case 1:
-                            strResult = 'Line_Start';
+                            strResult = 'Point';
                             break;
                         case 2:
-                            strResult = 'Line_End';
+                            strResult = 'Line_Start';
                             break;
                         case 3:
-                            strResult = 'Circle_Start';
+                            strResult = 'Line_End';
                             break;
                         case 4:
-                            strResult = 'Circle_Center';
+                            strResult = 'Circle_Start';
                             break;
                         case 5:
+                            strResult = 'Circle_Center';
+                            break;
+                        case 6:
                             strResult = 'Circle_End';
                             break;
                         default:
-                            strResult = '';
+                            strResult = 'none';
                             break;
                     }
                     return strResult;
@@ -884,11 +888,12 @@ var TcHmi;
                     let offsetScaleX = 6 * (1 / this.__scaleFactor);
                     let offsetScaleY = 54 * (1 / this.__scaleFactor);
                     // Offset positions
-                    let posX = __point.x * this.__scaleFactor;
+                    let posX = (__point.x * this.__scaleFactor);
                     let posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor;
+                    // Rescale
                     if (this.__scaleFactor > 1) {
                         // Horizontal
-                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
+                        posY = posY - 4 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
                             posY = posY - 4 * this.__tileHeight;
@@ -896,7 +901,7 @@ var TcHmi;
                     }
                     if (this.__scaleFactor > 2) {
                         // Horizontal
-                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
+                        posY = posY - 8 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
                             posY = posY - 8 * this.__tileHeight;
@@ -904,18 +909,92 @@ var TcHmi;
                     }
                     if (this.__scaleFactor > 3) {
                         // Horizontal
-                        posY = (this.__canvasElement.height - __point.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
+                        posY = posY - 12 * this.__tileHeight;
                         // Vertical
                         if (this.__isVerticalLayout) {
                             posY = posY - 12 * this.__tileHeight;
                         }
                     }
+                    // Format
+                    posX = parseFloat((posX).toFixed(2));
+                    posY = parseFloat((posY).toFixed(2));
                     // Write text
-                    let text = '(X: ' + String(posX * (this.__scaleFactor)) + ', Y: ' + String(posY * (this.__scaleFactor)) + ')';
+                    let text = '(X: ' + String(posX) + ', Y: ' + String(posY) + ')';
                     let offsetX = __point.x + offsetScaleX;
                     let offsetY = __point.y + offsetScaleY;
                     __ctx.fillText(text, offsetX, offsetY);
                     __ctx.fillText(__markerType, offsetX, offsetY - (offsetScaleY / 2));
+                    // Restore
+                    __ctx.restore();
+                }
+                // Track line text
+                M_TrackLineText(__ctx, __point1, __point2, __markerType1, __markerType2, __trackIndex, __displayOffset) {
+                    // Convert enumration to string
+                    let strType1 = __markerType1;
+                    let strType2 = __markerType2;
+                    // Init positions
+                    let midX = (__point1.x + __point2.x) / 2;
+                    let midY = (__point1.y + __point2.y) / 2;
+                    // Font type
+                    __ctx.beginPath();
+                    __ctx.fillStyle = 'black';
+                    __ctx.font = String(this.__fontSize * (1 / this.__scaleFactor)) + 'px serif';
+                    // Offset scale
+                    let offsetScaleX = 6 * (1 / this.__scaleFactor);
+                    let offsetScaleY = 54 * (1 / this.__scaleFactor);
+                    // Offset positions
+                    let posX1 = __point1.x * this.__scaleFactor;
+                    let posX2 = __point2.x * this.__scaleFactor;
+                    let posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor;
+                    let posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor;
+                    // Rescale
+                    if (this.__scaleFactor > 1) {
+                        // Horizontal
+                        posY1 = posY1 - 4 * this.__tileHeight;
+                        posY2 = posY2 - 4 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 4 * this.__tileHeight;
+                            posY2 = posY2 - 4 * this.__tileHeight;
+                        }
+                    }
+                    if (this.__scaleFactor > 2) {
+                        // Horizontal
+                        posY1 = posY1 - 8 * this.__tileHeight;
+                        posY2 = posY2 - 8 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 8 * this.__tileHeight;
+                            posY2 = posY2 - 8 * this.__tileHeight;
+                        }
+                    }
+                    if (this.__scaleFactor > 3) {
+                        // Vertical
+                        posY1 = posY1 - 12 * this.__tileHeight;
+                        posY2 = posY2 - 12 * this.__tileHeight;
+                        // Vertical
+                        if (this.__isVerticalLayout) {
+                            posY1 = posY1 - 12 * this.__tileHeight;
+                            posY2 = posY2 - 12 * this.__tileHeight;
+                        }
+                    }
+                    // Format
+                    posX1 = parseFloat(posX1.toFixed(2));
+                    posX2 = parseFloat(posX2.toFixed(2));
+                    posY1 = parseFloat(posY1.toFixed(2));
+                    posY2 = parseFloat(posY2.toFixed(2));
+                    // Write texts
+                    let text1 = '(X: ' + String(posX1) + ', Y: ' + String(posY1) + ')';
+                    let text2 = '(X: ' + String(posX2) + ', Y: ' + String(posY2) + ')';
+                    let offsetX1 = __point1.x + offsetScaleX;
+                    let offsetY1 = __point1.y + offsetScaleY;
+                    let offsetX2 = __point2.x + offsetScaleX;
+                    let offsetY2 = __point2.y + offsetScaleY;
+                    __ctx.fillText(text1, offsetX1, offsetY1);
+                    __ctx.fillText(strType1, offsetX1, offsetY1 - (offsetScaleY / 2));
+                    __ctx.fillText(String(__trackIndex), midX + offsetScaleX, midY);
+                    __ctx.fillText(text2, offsetX2, offsetY2);
+                    __ctx.fillText(strType2, offsetX2, offsetY2 - (offsetScaleY / 2));
                     // Restore
                     __ctx.restore();
                 }
@@ -956,71 +1035,6 @@ var TcHmi;
                             __ctx.restore();
                         }
                     }
-                }
-                // Track line text
-                M_TrackLineText(__ctx, __point1, __point2, __markerType1, __markerType2, __trackIndex, __displayOffset) {
-                    // Convert enumration to string
-                    let strType1 = __markerType1;
-                    let strType2 = __markerType2;
-                    // Init positions
-                    let midX = (__point1.x + __point2.x) / 2;
-                    let midY = (__point1.y + __point2.y) / 2;
-                    // Font type
-                    __ctx.beginPath();
-                    __ctx.fillStyle = 'black';
-                    __ctx.font = String(this.__fontSize * (1 / this.__scaleFactor)) + 'px serif';
-                    // Offset scale
-                    let offsetScaleX = 6 * (1 / this.__scaleFactor);
-                    let offsetScaleY = 54 * (1 / this.__scaleFactor);
-                    // Offset positions
-                    let posX1 = __point1.x * this.__scaleFactor;
-                    let posX2 = __point2.x * this.__scaleFactor;
-                    let posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor;
-                    let posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor;
-                    if (this.__scaleFactor > 1) {
-                        // Horizontal
-                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
-                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 4 * this.__tileHeight;
-                        // Vertical
-                        if (this.__isVerticalLayout) {
-                            posY1 = posY1 - 4 * this.__tileHeight;
-                            posY2 = posY2 - 4 * this.__tileHeight;
-                        }
-                    }
-                    if (this.__scaleFactor > 2) {
-                        // Horizontal
-                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
-                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 8 * this.__tileHeight;
-                        // Vertical
-                        if (this.__isVerticalLayout) {
-                            posY1 = posY1 - 8 * this.__tileHeight;
-                            posY2 = posY2 - 8 * this.__tileHeight;
-                        }
-                    }
-                    if (this.__scaleFactor > 3) {
-                        // Vertical
-                        posY1 = (this.__canvasElement.height - __point1.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
-                        posY2 = (this.__canvasElement.height - __point2.y - __displayOffset) * this.__scaleFactor - 12 * this.__tileHeight;
-                        // Vertical
-                        if (this.__isVerticalLayout) {
-                            posY1 = posY1 - 12 * this.__tileHeight;
-                            posY2 = posY2 - 12 * this.__tileHeight;
-                        }
-                    }
-                    // Write texts
-                    let text1 = '(X: ' + String(posX1) + ', Y: ' + String(posY1) + ')';
-                    let text2 = '(X: ' + String(posX2) + ', Y: ' + String(posY2) + ')';
-                    let offsetX1 = __point1.x + offsetScaleX;
-                    let offsetY1 = __point1.y + offsetScaleY;
-                    let offsetX2 = __point2.x + offsetScaleX;
-                    let offsetY2 = __point2.y + offsetScaleY;
-                    __ctx.fillText(text1, offsetX1, offsetY1);
-                    __ctx.fillText(strType1, offsetX1, offsetY1 - (offsetScaleY / 2));
-                    __ctx.fillText(String(__trackIndex), midX + offsetScaleX, midY);
-                    __ctx.fillText(text2, offsetX2, offsetY2);
-                    __ctx.fillText(strType2, offsetX2, offsetY2 - (offsetScaleY / 2));
-                    // Restore
-                    __ctx.restore();
                 }
                 //----------------//
                 // Circle methods //
@@ -1099,9 +1113,9 @@ var TcHmi;
                                 __ctx.closePath();
                             }
                         }
+                        // Restore
+                        __ctx.restore();
                     }
-                    // Restore
-                    __ctx.restore();
                 }
                 //-----------------------------//
                 // Control Factory Api methods //

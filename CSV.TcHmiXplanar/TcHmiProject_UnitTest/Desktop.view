@@ -2,7 +2,7 @@
   <div id="ViewDesktopBeckhoffLogo" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-src="Images/Beckhoff_Logo.svg" data-tchmi-left="0" data-tchmi-top="0" data-tchmi-width="200" data-tchmi-height="50" data-tchmi-zindex="1">
 
   </div>
-<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="330" data-tchmi-height-unit="px" data-tchmi-left="960" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="960" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="24" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="24" data-tchmi-row-numbers-font-size="20" data-tchmi-zindex="1">
+<div id="TcHmiDatagrid" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="390" data-tchmi-height-unit="px" data-tchmi-left="960" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="960" data-tchmi-width-unit="px" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astMoverInfo%/s%" data-tchmi-grid-font-size="24" data-tchmi-row-numbers-horizontal-alignment="Center" data-tchmi-row-numbers-vertical-alignment="Center" data-tchmi-header-font-size="24" data-tchmi-row-numbers-font-size="20" data-tchmi-zindex="1">
 <script data-tchmi-target-attribute="data-tchmi-src-column" type="application/json">
 [
   {
@@ -208,7 +208,7 @@
 </script>
 
 </div>
-<div id="TcHmiButton_ShowTrack" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="240" data-tchmi-left-unit="px" data-tchmi-text="Show track" data-tchmi-top="120" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowTrack%/s%" data-tchmi-zindex="1">
+<div id="TcHmiButton_ShowTrack" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="605" data-tchmi-left-unit="px" data-tchmi-text="Show track" data-tchmi-top="74" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowTrack%/s%" data-tchmi-zindex="1">
 
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
@@ -257,7 +257,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_ClearView" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="380" data-tchmi-left-unit="px" data-tchmi-text="Clear View" data-tchmi-top="180" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bClearView%/s%" data-tchmi-zindex="1">
+<div id="TcHmiButton_ClearView" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="745" data-tchmi-left-unit="px" data-tchmi-text="Clear View" data-tchmi-top="134" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bClearView%/s%" data-tchmi-zindex="1">
 
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
@@ -306,7 +306,7 @@
 }
 </script>
 </div>
-<div id="TcHmiCombobox_ScaleFactor" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-combobox-text="SF" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="380" data-tchmi-left-unit="px" data-tchmi-top="60" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-drop-down-vertical-alignment="Center" data-tchmi-drop-down-category-vertical-alignment="Center" data-tchmi-data-height="40" data-tchmi-drop-down-font-family="20" data-tchmi-text-font-size="20" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="1">
+<div id="TcHmiCombobox_ScaleFactor" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-combobox-text="SF" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="745" data-tchmi-left-unit="px" data-tchmi-top="14" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-drop-down-vertical-alignment="Center" data-tchmi-drop-down-category-vertical-alignment="Center" data-tchmi-data-height="40" data-tchmi-drop-down-font-family="20" data-tchmi-text-font-size="20" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="1">
 <script data-tchmi-target-attribute="data-tchmi-content-padding" type="application/json">
 {
   "top": 3,
@@ -374,7 +374,7 @@
 ]
 </script>
 </div>
-<div id="TcHmiButton_ShowHeatmap" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="380" data-tchmi-left-unit="px" data-tchmi-text="Show heat map" data-tchmi-top="120" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowHeatmap%/s%" data-tchmi-zindex="1">
+<div id="TcHmiButton_ShowHeatmap" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="745" data-tchmi-left-unit="px" data-tchmi-text="Show heat map" data-tchmi-top="74" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowHeatmap%/s%" data-tchmi-zindex="1">
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
   "color": "rgba(0, 0, 0, 1)"
@@ -422,7 +422,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_ShowAllTracks" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="240" data-tchmi-left-unit="px" data-tchmi-text="Show all tracks" data-tchmi-top="180" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowAllTracks%/s%" data-tchmi-zindex="1">
+<div id="TcHmiButton_ShowAllTracks" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="605" data-tchmi-left-unit="px" data-tchmi-text="Show all tracks" data-tchmi-top="134" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="16" data-tchmi-state-symbol="%s%PLC1.GVL_HMI.stXplanar::bShowAllTracks%/s%" data-tchmi-zindex="1">
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
   "color": "rgba(0, 0, 0, 1)"
@@ -483,7 +483,7 @@
 </script>
 
 </div>
-<div id="TcHmiCombobox_Tracks" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-combobox-text="Tracks" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="240" data-tchmi-left-unit="px" data-tchmi-top="60" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-drop-down-vertical-alignment="Center" data-tchmi-drop-down-category-vertical-alignment="Center" data-tchmi-data-height="40" data-tchmi-drop-down-font-family="20" data-tchmi-text-font-size="20" data-tchmi-text-horizontal-alignment="Center" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astComboboxTrack%/s%" data-tchmi-zindex="1">
+<div id="TcHmiCombobox_Tracks" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-combobox-text="Tracks" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="605" data-tchmi-left-unit="px" data-tchmi-top="14" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-drop-down-vertical-alignment="Center" data-tchmi-drop-down-category-vertical-alignment="Center" data-tchmi-data-height="40" data-tchmi-drop-down-font-family="20" data-tchmi-text-font-size="20" data-tchmi-text-horizontal-alignment="Center" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astComboboxTrack%/s%" data-tchmi-zindex="1">
 <script data-tchmi-target-attribute="data-tchmi-content-padding" type="application/json">
 {
   "top": 3,
