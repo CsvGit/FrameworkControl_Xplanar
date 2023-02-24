@@ -297,17 +297,27 @@
 ]
 </script>
 </div>
-<div id="TcHmiXplanarControl" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="920" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="920" data-tchmi-width-unit="px" data-tchmi-xplanar-mover-imagesrc="Images/mover.png" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=100%/s%" data-tchmi-zindex="0" data-tchmi-xplanar-isverticallayout="true" data-tchmi-xplanar-scalefactor="%i%nSelectedScale%/i%" data-tchmi-xplanar-trackindex="%i%nSelectedTrack%/i%">
-<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-textcolor" type="application/json">
-{
-  "color": "rgba(0,0,0,1)"
-}
-</script>
-<script data-tchmi-target-attribute="data-tchmi-xplanar-tile-backgroundcolor" type="application/json">
-{
-  "color": "rgba(255,255,255,1)"
-}
-</script>
+<div id="TcHmiXplanarControl" data-tchmi-type="TcHmi.Controls.TcHmiXplanar.TcHmiXplanarControl" data-tchmi-height="960" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="960" data-tchmi-width-unit="px" data-tchmi-xplanar-mover-imagesrc="Images/mover.png" data-tchmi-st-xplanar="%s%PLC1.GVL_HMI.stXplanar|Interval=1000%/s%" data-tchmi-zindex="0" data-tchmi-xplanar-isverticallayout="true" data-tchmi-xplanar-scalefactor="%i%nSelectedScale%/i%" data-tchmi-xplanar-trackindex="%i%nSelectedTrack%/i%">
+
+
+
+
+
+
+<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-alarm-color" type="application/json">{
+  "color": "rgba(128, 0, 0, 1)"
+}</script>
+
+
+
+<script data-tchmi-target-attribute="data-tchmi-xplanar-mover-background-color" type="application/json">{
+  "color": "rgba(67, 70, 75, 1)"
+}</script>
+
+
+
+
+
 
 </div>
 <div id="TcHmiCombobox_Tracks" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-combobox-text="Tracks" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="1010" data-tchmi-left-unit="px" data-tchmi-top="578" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-drop-down-vertical-alignment="Center" data-tchmi-drop-down-category-vertical-alignment="Center" data-tchmi-data-height="40" data-tchmi-drop-down-font-family="20" data-tchmi-text-font-size="20" data-tchmi-text-horizontal-alignment="Center" data-tchmi-src-data="%s%PLC1.GVL_HMI.stXplanar::astComboboxTrack%/s%" data-tchmi-zindex="1">

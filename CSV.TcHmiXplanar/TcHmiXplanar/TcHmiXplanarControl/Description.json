@@ -96,23 +96,6 @@
       "defaultValueInternal": null
     },
     {
-      "name": "data-tchmi-xplanar-mover-imagesrc",
-      "displayName": "MoverImageSrc",
-      "propertyName": "MoverImageSrc",
-      "propertySetterName": "M_SetMoverImageSrc",
-      "propertyGetterName": "M_GetMoverImageSrc",
-      "visible": true,
-      "type": "tchmi:framework#/definitions/Path",
-      "category": "Xplanar Params",
-      "description": "Mover Image Src.",
-      "requiredOnCompile": false,
-      "readOnly": false,
-      "bindable": true,
-      "heritable": false,
-      "defaultValue": null,
-      "defaultValueInternal": null
-    },
-    {
       "name": "data-tchmi-xplanar-scalefactor",
       "displayName": "ScaleFactor",
       "propertyName": "ScaleFactor",
@@ -178,10 +161,52 @@
       "bindable": true,
       "heritable": false,
       "defaultValue": {
-        "color": "rgba(0,0,0,1)"
+        "color": "rgba(255,255,255,1)"
       },
       "defaultValueInternal": {
-        "color": "rgba(0,0,0,1)"
+        "color": "rgba(255,255,255,1)"
+      }
+    },
+    {
+      "name": "data-tchmi-xplanar-mover-background-color",
+      "displayName": "MoverBackgroundColor",
+      "propertyName": "MoverBackgroundColor",
+      "propertySetterName": "M_SetMoverBackgroundColor",
+      "propertyGetterName": "M_GetMoverBackgroundColor",
+      "visible": true,
+      "type": "tchmi:framework#/definitions/Color",
+      "category": "Xplanar Params",
+      "description": "Mover background color.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": {
+        "color": "rgba(67,70,75,1)"
+      },
+      "defaultValueInternal": {
+        "color": "rgba(67,70,75,1)"
+      }
+    },
+    {
+      "name": "data-tchmi-xplanar-mover-alarm-color",
+      "displayName": "MoverAlarmColor",
+      "propertyName": "MoverAlarmColor",
+      "propertySetterName": "M_SetMoverAlarmColor",
+      "propertyGetterName": "M_SetMoverAlarmColor",
+      "visible": true,
+      "type": "tchmi:framework#/definitions/Color",
+      "category": "Xplanar Params",
+      "description": "Mover alarm color.",
+      "requiredOnCompile": false,
+      "readOnly": false,
+      "bindable": true,
+      "heritable": false,
+      "defaultValue": {
+        "color": "rgba(128,0,0,1)"
+      },
+      "defaultValueInternal": {
+        "color": "rgba(128,0,0,1)"
       }
     },
     {
@@ -212,10 +237,6 @@
       "displayPriority": 10
     },
     {
-      "name": "MoverImageSrc",
-      "displayPriority": 10
-    },
-    {
       "name": "ScaleFactor",
       "displayPriority": 10
     },
@@ -229,6 +250,10 @@
     },
     {
       "name": "MoverTextColor",
+      "displayPriority": 10
+    },
+    {
+      "name": "MoverBackgroundColor",
       "displayPriority": 10
     },
     {

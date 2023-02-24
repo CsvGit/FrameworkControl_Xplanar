@@ -109,29 +109,6 @@ var TcHmi;
                     super.destroy();
                 }
                 /**
-                * Gets the value of __moverImageSrc
-                * @returns The current value of MoverImageSrc
-                */
-                M_GetMoverImageSrc() {
-                    return this.__moverImageSrc;
-                }
-                /**
-                * Sets the value of __moverImageSrc
-                * @param valueNew The new value for MoverImageSrc
-                */
-                M_SetMoverImageSrc(valueNew) {
-                    // Convert the value
-                    let convertedValue = TcHmi.ValueConverter.toString(valueNew);
-                    // When converted value is null, get internal default
-                    if (convertedValue === null) {
-                        convertedValue = this.getAttributeDefaultValueInternal("MoverImageSrc");
-                    }
-                    // Save new value
-                    this.__moverImageSrc = convertedValue;
-                    // Inform the system that the function has a a changed result
-                    TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverImageSrc"]);
-                }
-                /**
                 * Gets the value of __scaleFactor
                 * @returns The current value of ScaleFactor
                 */
@@ -222,6 +199,52 @@ var TcHmi;
                     this.__moverTextColor = convertedValue;
                     // Inform the system that the function has a a changed result
                     TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverTextColor"]);
+                }
+                /**
+                * Gets the value of __tileBackgroundColor
+                * @returns The current value of TileBackgroundColor
+                */
+                M_GetMoverBackgroundColor() {
+                    return this.__moverBackgroundColor;
+                }
+                /**
+                * Sets the value of __tileBackgroundColor
+                * @param valueNew The new value for TileBackgroundColor
+                */
+                M_SetMoverBackgroundColor(valueNew) {
+                    // Convert the value
+                    let convertedValue = TcHmi.ValueConverter.toObject(valueNew);
+                    // When converted value is null, get internal default
+                    if (convertedValue === null) {
+                        convertedValue = this.getAttributeDefaultValueInternal("MoverBackgroundColor");
+                    }
+                    // Save new value
+                    this.__moverBackgroundColor = convertedValue;
+                    // Inform the system that the function has a a changed result
+                    TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverBackgroundColor"]);
+                }
+                /**
+                 * Gets the value of __tileBackgroundColor
+                 * @returns The current value of TileBackgroundColor
+                 */
+                M_GetMoverAlarmColor() {
+                    return this.__moverAlarmColor;
+                }
+                /**
+                * Sets the value of __tileBackgroundColor
+                * @param valueNew The new value for TileBackgroundColor
+                */
+                M_SetMoverAlarmColor(valueNew) {
+                    // Convert the value
+                    let convertedValue = TcHmi.ValueConverter.toObject(valueNew);
+                    // When converted value is null, get internal default
+                    if (convertedValue === null) {
+                        convertedValue = this.getAttributeDefaultValueInternal("MoverAlarmColor");
+                    }
+                    // Save new value
+                    this.__moverBackgroundColor = convertedValue;
+                    // Inform the system that the function has a a changed result
+                    TcHmi.EventProvider.raise(this.__id + ".onPropertyChanged", ["M_GetMoverAlarmColor"]);
                 }
                 /**
                 * Gets the value of __tileBackgroundColor
@@ -387,7 +410,7 @@ var TcHmi;
                         // Mover params
                         let strMoverFrameID = this.__id + '_TcHmiMoverFrame' + String(i + 1);
                         let strMoverImageID = this.__id + '_TcHmiMoverImage' + String(i + 1);
-                        let strMoverImageSrc = this.__moverImageSrc;
+                        let strMoverImageSrc = __stXplanar.astMoverImagePath[i];
                         let strMoverTextID = this.__id + '_TcHmiMoverText' + String(i + 1);
                         let strMoverText = '  ' + String(i + 1) + '.';
                         let strMoverRectangleID = this.__id + '_TcHmiMoverRectangle' + String(i + 1);
@@ -437,9 +460,11 @@ var TcHmi;
                             myMoverRectangle.setWidth(width);
                             myMoverRectangle.setHeight(height);
                             if (moverAlarm) {
+                                myMoverRectangle.setBackgroundColor(this.__moverAlarmColor);
                                 myMoverRectangle.setVisibility('Visible');
                             }
                             else {
+                                myMoverRectangle.setBackgroundColor(this.__moverBackgroundColor);
                                 myMoverRectangle.setVisibility('Collapsed');
                             }
                             // Set frame
@@ -691,7 +716,6 @@ var TcHmi;
                     let point3_prime = null;
                     // Loop
                     for (let p = 0; p < __arrPoint.length; p++) {
-                        console.log(__arrPointType[p]);
                         // Case
                         switch (__arrPointType[p]) {
                             // Point
@@ -1127,9 +1151,7 @@ var TcHmi;
                         'data-tchmi-bottom': __y,
                         'data-tchmi-width': __width,
                         'data-tchmi-height': __height,
-                        'data-tchmi-background-color': {
-                            'color': 'rgba(0, 0, 0, 0)'
-                        },
+                        'data-tchmi-background-color': this.__moverBackgroundColor,
                         'data-tchmi-zindex': 100
                     }, this // Marks this control as the parent 
                     );
@@ -1171,7 +1193,7 @@ var TcHmi;
                         'data-tchmi-zindex': 130
                     });
                 }
-                // Tile frame
+                // Tile rectangle
                 M_CreateTileFrame(__controlID, __x, __y, __width, __height) {
                     TcHmi.ControlFactory.createEx('TcHmi.Controls.Beckhoff.TcHmiRectangle', __controlID, {
                         'data-tchmi-left': __x,
